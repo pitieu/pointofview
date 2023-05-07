@@ -75,23 +75,23 @@ export const metadata = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <TrpcProvider>
-        <head />
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable,
-            fontHeading.variable
-          )}
-        >
+      <head />
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+          fontHeading.variable
+        )}
+      >
+        <TrpcProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
             <Analytics />
             <Toaster />
             <TailwindIndicator />
           </ThemeProvider>
-        </body>
-      </TrpcProvider>
+        </TrpcProvider>
+      </body>
     </html>
   )
 }

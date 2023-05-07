@@ -28,7 +28,7 @@ export const TrpcProvider: React.FC<{ children: React.ReactNode }> = ({
           enabled: () => true,
         }),
         httpBatchLink({
-          url: "/api/trpc",
+          url, //: "/api/trpc"
           fetch: async (input, init?) => {
             const fetch = getFetch()
             return fetch(input, {

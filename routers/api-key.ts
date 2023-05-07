@@ -7,17 +7,23 @@ import {
   createApiKeyHandler,
   updateApiKeyHandler,
   getApiKeysHandler,
+  deleteApiKeyHandler,
 } from "@/trpc-api/api-key.api"
-import { createApiKeySchema } from "@/schema/api-key.schema"
+import {
+  createApiKeySchema,
+  deleteApiKeySchema,
+  updateApiKeySchema,
+} from "@/schema/api-key.schema"
 
 export const apiKeyRouter = createTRPCRouter({
-  getAPIKeys: protectedProcedure
-    .input(createApiKeySchema)
-    .query(getApiKeysHandler),
+  getAPIKeys: protectedProcedure.query(getApiKeysHandler),
   createAPIKey: protectedProcedure
     .input(createApiKeySchema)
-    .query(createApiKeyHandler),
+    .mutation(createApiKeyHandler),
   updateAPIKey: protectedProcedure
-    .input(createApiKeySchema)
-    .query(updateApiKeyHandler),
+    .input(updateApiKeySchema)
+    .mutation(updateApiKeyHandler),
+  deleteAPIKey: protectedProcedure
+    .input(deleteApiKeySchema)
+    .mutation(deleteApiKeyHandler),
 })

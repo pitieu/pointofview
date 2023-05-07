@@ -1,10 +1,14 @@
-import { CreateAPIKeyType } from "@/schema/api-key.schema"
+import {
+  CreateAPIKeyType,
+  UpdateAPIKeyType,
+  DeleteAPIKeyType,
+} from "@/schema/api-key.schema"
 import { Context } from "@/app/api/trpc/trpc-router"
 import { TRPCError } from "@trpc/server"
 import { db } from "@/lib/db"
+import { ApiKey } from "@prisma/client"
 
 export async function getApiKeysHandler({ ctx }: { ctx: Context }) {
-  console.log("getApiKeysHandler ctx.session", ctx.session)
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
@@ -12,9 +16,15 @@ export async function getApiKeysHandler({ ctx }: { ctx: Context }) {
     where: {
       userId: userId,
     },
+    orderBy: {
+      createdAt: "asc",
+    },
   })
-
-  return apiKeys
+  const mappedKeys = apiKeys.map((apiKey: ApiKey) => {
+    apiKey.key = apiKey.key.slice(0, 3) + "..." + apiKey.key.slice(-4)
+    return apiKey
+  })
+  return mappedKeys
 }
 
 export async function createApiKeyHandler({
@@ -30,7 +40,7 @@ export async function createApiKeyHandler({
 
   const apiKey = await db.apiKey.create({
     data: {
-      name: name,
+      name: name || "Secret Key",
       userId: userId,
     },
   })
@@ -43,18 +53,39 @@ export async function updateApiKeyHandler({
   input,
 }: {
   ctx: Context
-  input: CreateAPIKeyType
+  input: UpdateAPIKeyType
 }) {
-  const { name } = input
+  const { name, apiKeyId } = input
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
   const apiKey = await db.apiKey.update({
     where: {
-      userId: userId,
+      id: apiKeyId,
     },
     data: {
       name: name,
+    },
+  })
+
+  return apiKey
+}
+
+export async function deleteApiKeyHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context
+  input: DeleteAPIKeyType
+}) {
+  const { apiKeyId } = input
+  const userId = ctx.session?.user.id as string
+  if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
+
+  const apiKey = await db.apiKey.deleteMany({
+    where: {
+      id: apiKeyId,
+      userId: userId,
     },
   })
 
