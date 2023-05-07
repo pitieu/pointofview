@@ -6,7 +6,7 @@ import { revalidateTag, revalidatePath } from "next/cache"
 
 import { authOptions } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/session"
-import { getApiKeys } from "@/lib/api-keys"
+import { trpc } from "@/lib/trpc"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   Card,
@@ -20,6 +20,8 @@ import { DashboardHeader } from "@/components/header"
 import { Icons } from "@/components/icons"
 import { DashboardShell } from "@/components/shell"
 import { Button } from "@/components/ui/button"
+import { ApiKeyTable } from "@/components/api-key-table"
+import { useEffect } from "react"
 
 export const metadata = {
   title: "API keys",
@@ -32,18 +34,19 @@ export default async function ApiKeyPage() {
   if (!user) {
     redirect(authOptions?.pages?.signIn || "/login")
   }
-  async function handleCreateApiKey(formData: FormData) {
-    "use server"
 
-    await fetch("/api/api-keys", {
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-      body: JSON.stringify({ name: formData.get("name") }),
-    })
-    revalidatePath("/dashboard/api-keys")
-    return Promise.resolve()
-  }
-  const apiKeys = (await getApiKeys(user.id)) as ApiKey[]
+  //   const result = trpc.apiKey.createAPIKey.useQuery({
+  //     name: "abs",
+  //   })
+
+  //   async function handleCreateApiKey(formData: FormData) {
+  //     "use client"
+
+  //     console.log(result)
+
+  //     revalidatePath("/dashboard/api-keys")
+  //     return Promise.resolve()
+  //   }
 
   return (
     <DashboardShell>
@@ -65,41 +68,10 @@ export default async function ApiKeyPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th className="border-b-2 border-slate-100 pb-2 text-left">
-                  Name
-                </th>
-                <th className="w-[100px] border-b-2 border-slate-100 pb-2 text-left">
-                  Key
-                </th>
-                <th className="w-[100px] border-b-2 border-slate-100 pb-2 text-left">
-                  Created
-                </th>
-                <th className="w-[100px] border-b-2 border-slate-100 pb-2 text-left"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {apiKeys.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="p-8 text-center">
-                    No API keys found.
-                  </td>
-                </tr>
-              )}
-              {apiKeys.map((key, index) => (
-                <tr key={`key-${index}`}>
-                  <td>{key.name}</td>
-                  <td>{key.key}</td>
-                  <td>{moment(key.createdAt).format("DD MMM YYYY")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <form action={handleCreateApiKey}>
+          <ApiKeyTable />
+          {/* <form action={handleCreateApiKey}>
             <Button>+ Create new API key</Button>
-          </form>
+          </form> */}
         </CardContent>
       </Card>
     </DashboardShell>

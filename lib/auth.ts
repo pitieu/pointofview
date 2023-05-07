@@ -1,5 +1,10 @@
+import { type GetServerSidePropsContext } from "next"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { NextAuthOptions } from "next-auth"
+import {
+  getServerSession,
+  type NextAuthOptions,
+  type DefaultSession,
+} from "next-auth"
 // import EmailProvider from "next-auth/providers/email"
 import GoogleProvider from "next-auth/providers/google"
 // import { Client } from "postmark"
@@ -9,6 +14,27 @@ import { env } from "@/env.mjs"
 import { db } from "@/lib/db"
 
 // const postmarkClient = new Client(env.POSTMARK_API_TOKEN)
+
+/**
+ * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
+ * object and keep type safety.
+ *
+ * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
+ */
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string
+      // ...other properties
+      // role: UserRole;
+    } & DefaultSession["user"]
+  }
+
+  // interface User {
+  //   // ...other properties
+  //   // role: UserRole;
+  // }
+}
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db as any),
@@ -99,4 +125,11 @@ export const authOptions: NextAuthOptions = {
       }
     },
   },
+}
+
+export const getServerAuthSession = (ctx: {
+  req: GetServerSidePropsContext["req"]
+  res: GetServerSidePropsContext["res"]
+}) => {
+  return getServerSession(ctx.req, ctx.res, authOptions)
 }
