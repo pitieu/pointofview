@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -32,6 +32,22 @@ model Account {
   @@map(name: "accounts")
 }
 
+model ApiKey {
+  id            Int      @id @default(autoincrement())
+  key           String   @unique @default(cuid())
+  name          String   @default("Secret key")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deleted       Boolean  @default(false)
+  deletedBy     User?    @relation(fields: [deletedById], references: [id])
+  deletedById   String?
+  deletedAt     DateTime?
+  deletedReason String?
+  userId        String
+
+  @@map(name: "api_keys")
+}
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -53,6 +69,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  apiKeys  ApiKey[]
   Post     Post[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
