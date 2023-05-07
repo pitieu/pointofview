@@ -26,6 +26,7 @@ import { CreateApiKeyModal } from "./create-api-key-modal"
 import { UpdateApiKeyModal } from "./update-api-key-modal"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "./ui/toast"
+import { Skeleton } from "./ui/skeleton"
 
 export function ApiKeyTable() {
   const {
@@ -73,9 +74,26 @@ export function ApiKeyTable() {
         <tbody>
           {apiKeys.length === 0 && (
             <tr>
-              <td colSpan={3} className="p-8 text-center">
-                No API keys found.
-              </td>
+              {isLoading ? (
+                <>
+                  <td className="px-1">
+                    <Skeleton className="m-2 h-3 w-full" />
+                  </td>
+                  <td className="px-1">
+                    <Skeleton className="m-2 h-3 w-full" />
+                  </td>
+                  <td className="px-1">
+                    <Skeleton className="m-2 h-3 w-full" />
+                  </td>
+                  <td className="px-1">
+                    <Skeleton className="m-2 h-3 w-full" />
+                  </td>
+                </>
+              ) : (
+                <td colSpan={3} className="p-8 text-center">
+                  No API keys found.
+                </td>
+              )}
             </tr>
           )}
           {apiKeys.map((key, index) => (
