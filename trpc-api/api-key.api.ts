@@ -56,7 +56,7 @@ export async function updateApiKeyHandler({
   input: UpdateAPIKeyType
 }) {
   const { name, apiKeyId } = input
-  const userId = ctx.session?.user.id as string
+  const userId = ctx.session.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
   const apiKey = await db.apiKey.update({
@@ -79,7 +79,7 @@ export async function deleteApiKeyHandler({
   input: DeleteAPIKeyType
 }) {
   const { apiKeyId } = input
-  const userId = ctx.session?.user.id as string
+  const userId = ctx.session.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
   const apiKey = await db.apiKey.deleteMany({

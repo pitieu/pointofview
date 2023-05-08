@@ -6,8 +6,13 @@ import { db } from "@/lib/db"
 import { ZodError } from "zod"
 import { getServerAuthSession } from "@/lib/auth"
 import { ServerResponse } from "http"
+import { type Session } from "next-auth"
 
-const createInnerTRPCContext = (opts) => {
+type CreateContextOptions = {
+  session: Session | null
+}
+
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     db,
@@ -22,13 +27,12 @@ const createInnerTRPCContext = (opts) => {
 export const createTRPCContext = async ({ req }) => {
   // get server session here
   const res = new ServerResponse(req)
-  // const session = null
   const session = await getServerAuthSession({
     req: req,
     res: res,
   })
 
-  // console.log("createTRPCContext session:", session)
+  console.log("createTRPCContext session:", session)
   return createInnerTRPCContext({
     session,
   })

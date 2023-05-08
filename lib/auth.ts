@@ -12,7 +12,8 @@ import GoogleProvider from "next-auth/providers/google"
 import { env } from "@/env.mjs"
 // import { siteConfig } from "@/config/site"
 import { db } from "@/lib/db"
-
+import { Context } from "@/app/api/trpc/trpc-router"
+import { Session } from "@prisma/client"
 // const postmarkClient = new Client(env.POSTMARK_API_TOKEN)
 
 /**
@@ -37,7 +38,7 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db as any),
+  adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
   },

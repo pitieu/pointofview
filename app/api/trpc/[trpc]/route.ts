@@ -6,7 +6,7 @@ import { appRouter } from "@/lib/routes"
 import { env } from "@/env.mjs"
 
 const handler = (request: Request) => {
-  console.log(`incoming request ${request.url}`)
+  console.log(`incoming request ${decodeURIComponent(request.url)}`)
 
   return fetchRequestHandler({
     endpoint: "/api/trpc",
