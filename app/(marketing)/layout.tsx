@@ -3,7 +3,7 @@ import Link from "next/link"
 import { marketingConfig } from "@/config/marketing"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { MainNav } from "@/components/main-nav"
+import { MainNav } from "@/components/navigation/main-nav"
 import { SiteFooter } from "@/components/site-footer"
 
 interface MarketingLayoutProps {

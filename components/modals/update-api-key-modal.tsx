@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { trpc } from "@/lib/trpc"
+import { Edit } from "lucide-react"
 
 import {
   Dialog,
@@ -10,36 +11,43 @@ import {
   DialogHeader,
   DialogTrigger,
   DialogClose,
-} from "./ui/dialog"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
+} from "../ui/dialog"
+import { Button } from "../ui/button"
+import { Input } from "../ui/input"
+
 import { useToast } from "@/components/ui/use-toast"
-import { ToastAction } from "./ui/toast"
+import { ToastAction } from "../ui/toast"
 
 type ApiKeyModalProps = {
+  defaultName?: string
+  apiKeyId?: number | undefined
   refetch?: () => void
 }
 
-export const CreateApiKeyModal = function ({ refetch }: ApiKeyModalProps) {
+export const UpdateApiKeyModal = function ({
+  defaultName = "",
+  apiKeyId = 0,
+  refetch,
+}: ApiKeyModalProps) {
   const [name, setName] = useState("")
   const { toast } = useToast()
 
-  const createApiKey = trpc.apiKey.createAPIKey.useMutation({
+  const editDialogChange = (state: boolean) => {
+    if (state) setName(defaultName)
+  }
+  const updateApiKey = trpc.apiKey.updateAPIKey.useMutation({
     onSuccess: () => {
       toast({
-        title: "API key created",
+        title: "Api Key name updated",
       })
     },
-    onError: (error) => {
+    onError(data) {
       toast({
         variant: "destructive",
-        title: "Failed to create API key",
+        title: "Failed to update name",
         // description: error.message,
         action: (
-          <ToastAction
-            altText="Try again"
-            onClick={() => createApiKey.mutate({ name })}
-          >
+          <ToastAction altText="Try again" onClick={callSave}>
             Try again
           </ToastAction>
         ),
@@ -50,19 +58,27 @@ export const CreateApiKeyModal = function ({ refetch }: ApiKeyModalProps) {
     },
   })
 
+  const callSave = () => {
+    if (apiKeyId === 0) return
+    updateApiKey.mutate({
+      name,
+      apiKeyId: apiKeyId,
+    })
+  }
+
   return (
-    <Dialog
-      onOpenChange={() => {
-        setName("")
-      }}
-    >
+    <Dialog onOpenChange={editDialogChange}>
       <DialogTrigger asChild>
-        <Button className="mt-2" disabled={createApiKey.isLoading}>
-          Create new Api Key
+        <Button
+          variant="ghost"
+          className="h-8 w-8 p-2"
+          disabled={updateApiKey.isLoading}
+        >
+          <Edit size={16} />
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader className="font-semibold">Create Api Key</DialogHeader>
+        <DialogHeader className="font-semibold">Edit Api Key</DialogHeader>
         <form>
           <div className="grid grid-cols-4 items-center gap-4">
             <label
@@ -84,11 +100,11 @@ export const CreateApiKeyModal = function ({ refetch }: ApiKeyModalProps) {
           <DialogClose asChild>
             <Button
               type="submit"
-              disabled={createApiKey.isLoading}
+              disabled={updateApiKey.isLoading}
               className="bg-green-600 hover:bg-green-700"
-              onClick={() => createApiKey.mutate({ name })}
+              onClick={callSave}
             >
-              Create Api Key
+              Save changes
             </Button>
           </DialogClose>
         </DialogFooter>

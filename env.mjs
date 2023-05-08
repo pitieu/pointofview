@@ -5,7 +5,7 @@ export const env = createEnv({
   server: {
     // This is optional because it's only used in development.
     // See https://next-auth.js.org/deployment.
-    NODE_ENV: z.enum("development", "production"),
+    NODE_ENV: z.enum(["development", "production"]),
     NEXTAUTH_URL: z.string().url().optional(),
     NEXTAUTH_SECRET: z.string().min(1),
     GOOGLE_CLIENT_ID: z.string().min(1),
@@ -15,9 +15,9 @@ export const env = createEnv({
     // POSTMARK_API_TOKEN: z.string().min(1),
     // POSTMARK_SIGN_IN_TEMPLATE: z.string().min(1),
     // POSTMARK_ACTIVATION_TEMPLATE: z.string().min(1),
-    STRIPE_API_KEY: z.string().optional(),
-    STRIPE_WEBHOOK_SECRET: z.string().optional(),
-    STRIPE_PRO_MONTHLY_PLAN_ID: z.string().optional(),
+    STRIPE_API_KEY: z.string().min(1),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    STRIPE_PRO_MONTHLY_PLAN_ID: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1),

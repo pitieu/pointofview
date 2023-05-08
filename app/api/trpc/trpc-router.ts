@@ -32,7 +32,6 @@ export const createTRPCContext = async ({ req }) => {
     res: res,
   })
 
-  console.log("createTRPCContext session:", session)
   return createInnerTRPCContext({
     session,
   })

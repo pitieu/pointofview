@@ -14,8 +14,8 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog"
 
-import { CreateApiKeyModal } from "./create-api-key-modal"
-import { UpdateApiKeyModal } from "./update-api-key-modal"
+import { CreateApiKeyModal } from "./modals/create-api-key-modal"
+import { UpdateApiKeyModal } from "./modals/update-api-key-modal"
 import { useToast } from "@/components/ui/use-toast"
 import { Skeleton } from "./ui/skeleton"
 
