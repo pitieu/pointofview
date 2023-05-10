@@ -13,7 +13,7 @@ interface AiParagraphToolConfig {
 interface BlockToolConstructorOptions extends BaseBlockToolConstructorOptions {
   api: API
   config?: AiParagraphToolConfig
-  readOnly?: string
+  readOnly: boolean
   placeholder?: string
   preserveBlank?: boolean
 }
@@ -62,7 +62,7 @@ function extractTextFromEditorContent(content: any): string {
 export class AiParagraphTool implements BlockTool {
   private api: API
   private config: AiParagraphToolConfig
-  private readOnly: string
+  private readOnly: boolean
   private defaultData: any
   private _placeholder: string
   private _data: any
@@ -73,7 +73,7 @@ export class AiParagraphTool implements BlockTool {
   constructor(options: BlockToolConstructorOptions) {
     this.api = options.api
     this.config = options.config || { getContent: async () => ({}) }
-    this.readOnly = options.readOnly || "false"
+    this.readOnly = options.readOnly || false
 
     if (!this.readOnly) {
       this.onKeyUp = this.onKeyUp.bind(this)
@@ -141,7 +141,7 @@ export class AiParagraphTool implements BlockTool {
         const result = await response.text()
         this._data.text = result
         this._element.innerText = result || ""
-        if (this.readOnly == "false") {
+        if (this.readOnly) {
           this._element.contentEditable = "true"
           this._element.addEventListener("keyup", this.onKeyUp)
         }

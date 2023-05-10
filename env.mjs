@@ -19,6 +19,8 @@ export const env = createEnv({
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
     STRIPE_PRO_MONTHLY_PLAN_ID: z.string().min(1),
     OPENAI_API_KEY: z.string().min(1),
+    SUPABASE_DB_PASSWORD: z.string().min(1),
+    SUPABASE_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1),
@@ -39,5 +41,7 @@ export const env = createEnv({
     STRIPE_PRO_MONTHLY_PLAN_ID: process.env.STRIPE_PRO_MONTHLY_PLAN_ID,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    SUPABASE_DB_PASSWORD: process.env.SUPABASE_DB_PASSWORD,
+    SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
   },
 })

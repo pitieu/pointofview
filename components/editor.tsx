@@ -20,6 +20,7 @@ import { Icons } from "@/components/icons"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { AiParagraphTool } from "./gpt3-tool"
+import MarkdownTool from "./markdown-editorjs-tool"
 
 interface EditorProps {
   post: Pick<Post, "id" | "title" | "content" | "published">
@@ -61,11 +62,21 @@ export function Editor({ post }: EditorProps) {
         inlineToolbar: true,
         data: body.content,
         tools: {
+          markdown: MarkdownTool,
           aiParagraph: {
             class: AiParagraphTool,
             config: {
               api: () => editor,
               getContent: () => editor.save(),
+            },
+          },
+          image: {
+            class: ImageTool,
+            config: {
+              endpoints: {
+                byFile: "/api/images",
+                // byUrl: "/api/fetch-image",
+              },
             },
           },
           header: Header,
@@ -75,7 +86,6 @@ export function Editor({ post }: EditorProps) {
           inlineCode: InlineCode,
           table: Table,
           embed: Embed,
-          image: ImageTool,
         },
       })
     }

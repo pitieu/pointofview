@@ -21,6 +21,8 @@ const blocksToMarkdown = (blocks) => {
           return `# ${block.data.text}`
         case "paragraph":
           return block.data.text
+        case "callout":
+          return `<Callout>${block.data.text}</Callout>`
         case "list":
           return block.data.items.map((item) => `- ${item}`).join("\n")
         case "quote":
@@ -31,6 +33,8 @@ const blocksToMarkdown = (blocks) => {
           return `---`
         case "raw":
           return block.data.html
+        case "image":
+          return `![${block.data.caption}](${block.data.file.url})`
         case "table":
           const elem =
             "| ------------- ".repeat(block.data.content[0].length) + "|"
