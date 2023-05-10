@@ -21,6 +21,8 @@ const blocksToMarkdown = (blocks) => {
           return `# ${block.data.text}`
         case "paragraph":
           return block.data.text
+        case "markdown":
+          return block.data.text
         case "callout":
           return `<Callout>${block.data.text}</Callout>`
         case "list":

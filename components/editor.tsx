@@ -186,7 +186,7 @@ export function Editor({ post }: EditorProps) {
         </div>
 
         <div className="flex w-full flex-row gap-4">
-          <div className="prose prose-stone mx-auto w-full dark:prose-invert">
+          <div className="editorjs prose prose-stone w-full dark:prose-invert">
             <TextareaAutosize
               autoFocus
               id="title"
@@ -195,7 +195,7 @@ export function Editor({ post }: EditorProps) {
               className="w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none"
               {...register("title")}
             />
-            <div id="editor" className="min-h-[500px]" />
+            <div id="editor" className="min-h-[500px] flex-1" />
             <p className="text-sm text-gray-500">
               Use{" "}
               <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">

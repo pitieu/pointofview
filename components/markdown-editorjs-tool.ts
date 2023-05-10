@@ -2,6 +2,8 @@
 
 import MarkdownIt from "markdown-it"
 import { API } from "@editorjs/editorjs"
+import autosize from "autosize"
+import { Mdx } from "@/components/mdx-components"
 
 interface MarkdownToolData {
   text: string
@@ -37,7 +39,7 @@ class MarkdownTool {
     config: MarkdownToolConfig
   }) {
     this.api = api
-    this.data = data || { text: "" }
+    this.data = !Object.keys(data).length ? { text: "" } : data
     this.config = config || {}
     this.wrapper = null
     this.markdownIt = new MarkdownIt()
@@ -45,23 +47,44 @@ class MarkdownTool {
 
   render(): HTMLElement {
     this.wrapper = document.createElement("div")
-    this.wrapper.classList.add("markdown-editor")
+    this.wrapper.classList.add("markdown-editor", "flex", "flex-row")
 
     this.textarea = document.createElement("textarea")
     this.textarea.classList.add("w-full")
+    this.textarea.style.outline = "none"
     this.wrapper.appendChild(this.textarea)
 
     if (this.data.text) {
       this.textarea.value = this.data.text
     }
 
+    autosize(this.textarea)
+
     this.textarea.addEventListener("input", () => {
       this.updatePreview()
+      this.data.text = this.textarea.value
+    })
+    this.textarea.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.stopPropagation()
+      }
     })
 
     this.preview = document.createElement("div")
-    this.preview.classList.add("markdown-preview")
+    this.preview.classList.add("markdown-preview", "w-full", "ml-4")
     this.wrapper.appendChild(this.preview)
+
+    this.preview.addEventListener("click", (event) => {
+      this.textarea.style.display = "block"
+      this.textarea.focus()
+    })
+
+    this.textarea.addEventListener("blur", (event) => {
+      if (this.data.text.length > 0) {
+        this.textarea.style.display = "none"
+        this.preview.style.display = "block"
+      }
+    })
 
     this.updatePreview()
 
