@@ -52,9 +52,6 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           <Link href={pages.settings.href}>Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href={pages.pricing.href}>Pricing</Link>
-        </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={(event) => {

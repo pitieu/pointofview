@@ -107,14 +107,14 @@ export default async function PostPage({ params }: PostPageProps) {
         See all posts
       </Link>
       <div>
-        {post.date && (
+        {/* {post.date && (
           <time
             dateTime={post.date}
             className="block text-sm text-muted-foreground"
           >
             Published on {formatDate(post.date)}
           </time>
-        )}
+        )} */}
         <h1 className="mt-2 inline-block font-heading text-4xl leading-tight lg:text-5xl">
           {post.title}
         </h1>

@@ -9,6 +9,11 @@ export const pages = {
     title: "Login",
     href: "/login",
   },
+  posts: {
+    title: "Posts",
+    href: "/dashboard",
+    icon: "post",
+  }as MainNavItem,
   apiKeys: {
     title: "Api Keys",
     href: "/dashboard/api-keys",
@@ -38,21 +43,15 @@ export const pages = {
     title: "Features",
     href: "/#features",
   } as MainNavItem,
-  pricing: {
-    title: "Pricing",
-    href: "/pricing",
+  
+  beauty: {
+    title: "Beauty",
+    href: "/#beauty",
   } as MainNavItem,
-  blog: {
-    title: "Blog",
-    href: "/blog",
-  } as MainNavItem,
-  documentation: {
-    title: "Documentation",
-    href: "/docs",
-  } as MainNavItem,
-  guides: {
-    title: "Guides",
-    href: "/guides",
+
+  productReviews: {
+    title: "Product Reviews",
+    href: "/#product-reviews",
   } as MainNavItem,
 
   // docs

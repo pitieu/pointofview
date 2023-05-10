@@ -2,7 +2,7 @@ import { DocsConfig } from "types"
 import { pages } from "./pages"
 
 export const docsConfig: DocsConfig = {
-  mainNav: [pages.documentation, pages.guides],
+  mainNav: [],
   sidebarNav: [
     pages.gettingStartedDocs,
     pages.documentationDocs,

@@ -12,6 +12,7 @@ const nextConfig = {
     serverActions: true,
     serverComponentsExternalPackages: ["@prisma/client"],
   },
+  swcMinify: true,
 }
 
 export default withContentlayer(nextConfig)

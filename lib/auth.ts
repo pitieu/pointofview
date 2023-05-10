@@ -117,6 +117,7 @@ export const authOptions: NextAuthOptions = {
         }
         return token
       }
+      if(dbUser.email !=="marcio19888@gmail.com"){ throw Error('Not allowed')}
 
       return {
         id: dbUser.id,
