@@ -36,7 +36,7 @@ export async function generateAIPostHandler({
   // const result = await chatCompletion(
   //   content as CreateChatCompletionRequest["messages"]
   // )
-  return new Response("OK")
+  return "Ok"
 }
 
 export async function searchProductDetailsHandler({

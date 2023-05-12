@@ -1012,6 +1012,13 @@
   resolved "https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.1.1.tgz"
   integrity sha512-dhPeilub1NuIG0X5Kvhh9lH4iW3ZsHlnzwgwbOlgwQ2wG1IqFzsgHqmKPk3WzsdWAeaxKJxgM0+W433RmN45GA==
 
+"@pinecone-database/pinecone@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.npmjs.org/@pinecone-database/pinecone/-/pinecone-0.1.5.tgz"
+  integrity sha512-Amkc6JFjhRzKqf5GkdI2Pd4H7+EqUtNp7kaJdCSgDT2PG2cokx+bGyRBWzrkYD7Kwo5jtWaPNWcblysEUPWCVg==
+  dependencies:
+    cross-fetch "^3.1.5"
+
 "@pkgr/utils@^2.3.1":
   version "2.4.0"
   resolved "https://registry.npmjs.org/@pkgr/utils/-/utils-2.4.0.tgz"

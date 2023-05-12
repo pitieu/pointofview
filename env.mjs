@@ -23,6 +23,10 @@ export const env = createEnv({
     SUPABASE_API_KEY: z.string().min(1),
     BING_SEARCH_API_KEY: z.string().min(1),
     BING_ENDPOINT: z.string().min(1),
+    PINECONE_ENVIRONMENT: z.string().min(1),
+    PINECONE_API_KEY: z.string().min(1),
+    PINECONE_INDEX_NAME: z.string().min(1),
+    PINECONE_NAMESPACE: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1),
@@ -47,5 +51,9 @@ export const env = createEnv({
     SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
     BING_SEARCH_API_KEY: process.env.BING_SEARCH_API_KEY,
     BING_ENDPOINT: process.env.BING_ENDPOINT,
+    PINECONE_ENVIRONMENT: process.env.PINECONE_ENVIRONMENT,
+    PINECONE_API_KEY: process.env.PINECONE_API_KEY,
+    PINECONE_INDEX_NAME: process.env.PINECONE_INDEX_NAME,
+    PINECONE_NAMESPACE: process.env.PINECONE_NAMESPACE,
   },
 })
