@@ -21,6 +21,8 @@ export const env = createEnv({
     OPENAI_API_KEY: z.string().min(1),
     SUPABASE_DB_PASSWORD: z.string().min(1),
     SUPABASE_API_KEY: z.string().min(1),
+    BING_SEARCH_API_KEY: z.string().min(1),
+    BING_ENDPOINT: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1),
@@ -43,5 +45,7 @@ export const env = createEnv({
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     SUPABASE_DB_PASSWORD: process.env.SUPABASE_DB_PASSWORD,
     SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
+    BING_SEARCH_API_KEY: process.env.BING_SEARCH_API_KEY,
+    BING_ENDPOINT: process.env.BING_ENDPOINT,
   },
 })

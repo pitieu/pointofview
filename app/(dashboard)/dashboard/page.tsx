@@ -8,6 +8,7 @@ import { DashboardHeader } from "@/components/header"
 import { PostCreateButton } from "@/components/post-create-button"
 import { PostItem } from "@/components/post-item"
 import { DashboardShell } from "@/components/shell"
+import { GeneratePostModal } from "@/components/modals/generate-post-modal"
 
 export const metadata = {
   title: "Dashboard",
@@ -38,7 +39,10 @@ export default async function DashboardPage() {
   return (
     <DashboardShell>
       <DashboardHeader heading="Posts" text="Create and manage posts.">
-        <PostCreateButton />
+        <div className="flex gap-4">
+          <GeneratePostModal />
+          <PostCreateButton />
+        </div>
       </DashboardHeader>
       <div>
         {posts?.length ? (

@@ -46,9 +46,13 @@ export function PostCreateButton({
     router.push(`/editor/${post.id}`)
   }
 
+  const openModal = React.useCallback(() => {
+    onClick()
+  }, [])
+
   return (
     <button
-      onClick={onClick}
+      onClick={openModal}
       className={cn(
         buttonVariants({ variant }),
         {
@@ -64,7 +68,7 @@ export function PostCreateButton({
       ) : (
         <Icons.add className="mr-2 h-4 w-4" />
       )}
-      New post
+      Generate AI Post
     </button>
   )
 }

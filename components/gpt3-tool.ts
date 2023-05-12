@@ -4,8 +4,6 @@ import {
   BlockToolConstructorOptions as BaseBlockToolConstructorOptions,
 } from "@editorjs/editorjs"
 import { editorjsTools } from "./icons"
-import { openaiCompletion } from "@/lib/openai"
-import { trpc } from "@/lib/trpc"
 
 interface AiParagraphToolConfig {
   getContent: () => Promise<any>
