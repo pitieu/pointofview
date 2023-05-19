@@ -1,15 +1,19 @@
 import {
   AlertTriangle,
   ArrowRight,
+  BarChart2,
   Check,
   ChevronLeft,
   ChevronRight,
+  CircleDollarSign,
   Command,
   CreditCard,
   File,
   FileText,
+  Globe,
   HelpCircle,
   Image,
+  Instagram,
   Laptop,
   Loader2,
   LucideProps,
@@ -23,14 +27,20 @@ import {
   Twitter,
   User,
   X,
+  Youtube,
   type Icon as LucideIcon,
 } from "lucide-react"
 
 export type Icon = LucideIcon
 
 export const Icons = {
+  dollars: CircleDollarSign,
+  instagram: Instagram,
+  youtube: Youtube,
+  internet: Globe,
   logo: Command,
   close: X,
+  barChart: BarChart2,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,

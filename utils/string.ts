@@ -1,6 +1,7 @@
 import { summarizeWebsite } from "@/lib/openai"
+import { CreateCompletionRequest, CreateCompletionRequestPrompt } from "openai"
 
-const MAX_WEB_TEXT_SIZE = 30000 // we use a max text size to prevent from calling OpenAi summarize too many times
+const MAX_WEB_TEXT_SIZE = 16000 // we use a max text size to prevent from calling OpenAi summarize too many times
 
 /**
  * Normalizes a text by removing extra spaces.
@@ -41,7 +42,9 @@ export const summarizeChunks = async (
   text: string,
   maxChunkSize: number,
   minOutputSize: number,
-  summarizer: (text: string) => Promise<string | undefined> = summarizeWebsite
+  summarizer: (
+    prompt: CreateCompletionRequestPrompt
+  ) => Promise<string | undefined> = summarizeWebsite
 ): Promise<string> => {
   if (!text) return ""
   if (text.length > MAX_WEB_TEXT_SIZE) text = text.slice(0, MAX_WEB_TEXT_SIZE)
@@ -52,7 +55,8 @@ export const summarizeChunks = async (
   }
 
   // If the input text is too large, chunk it and recursively summarize each chunk.
-  if (text.length > maxChunkSize) {
+  // Added arbitrary 300 chars to make sure that the chunk size is not too small.
+  if (text.length + 300 > maxChunkSize) {
     const chunks = chunkText(text, maxChunkSize)
     const summaries = await Promise.all(
       chunks.map(async (chunk) => await summarizer(chunk))

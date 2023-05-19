@@ -1,19 +1,21 @@
 import { type GetServerSidePropsContext } from "next"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { Session } from "@prisma/client"
 import {
   getServerSession,
-  type NextAuthOptions,
   type DefaultSession,
+  type NextAuthOptions,
 } from "next-auth"
 // import EmailProvider from "next-auth/providers/email"
 import GoogleProvider from "next-auth/providers/google"
+
 // import { Client } from "postmark"
 
 import { env } from "@/env.mjs"
 // import { siteConfig } from "@/config/site"
 import { db } from "@/lib/db"
 import { Context } from "@/app/api/trpc/trpc-router"
-import { Session } from "@prisma/client"
+
 // const postmarkClient = new Client(env.POSTMARK_API_TOKEN)
 
 /**
@@ -26,6 +28,8 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string
+      username?: string
+      bio?: string
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"]
@@ -117,12 +121,16 @@ export const authOptions: NextAuthOptions = {
         }
         return token
       }
-      if(dbUser.email !=="marcio19888@gmail.com"){ throw Error('Not allowed')}
+      if (dbUser.email !== "marcio19888@gmail.com") {
+        throw Error("Not allowed")
+      }
 
       return {
         id: dbUser.id,
         name: dbUser.name,
+        username: dbUser.username,
         email: dbUser.email,
+        bio: dbUser.bio,
         picture: dbUser.image,
       }
     },

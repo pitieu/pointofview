@@ -4,7 +4,6 @@ import * as z from "zod"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { RequiresProPlanError } from "@/lib/exceptions"
-import { getUserSubscriptionPlan } from "@/lib/subscription"
 
 const postCreateSchema = z.object({
   title: z.string(),
@@ -62,6 +61,7 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify(post))
   } catch (error) {
+    console.log(error)
     if (error instanceof z.ZodError) {
       return new Response(JSON.stringify(error.issues), { status: 422 })
     }

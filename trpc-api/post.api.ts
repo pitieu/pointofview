@@ -46,17 +46,26 @@ export async function searchProductDetailsHandler({
   input: ProductType
   ctx: Context
 }) {
-  console.log("searchProductDetailsHandler called")
-  console.log(input)
+  try {
+    console.log("searchProductDetailsHandler called")
+    console.log(input)
 
-  const urls = await search(input.product, 1)
-  const result = await crawlAndSummarizeUrls({
-    urls: urls.map((url: Url) => url.url),
-    summarizer: (str) => summarizeProduct(str, input.product),
-  })
-  // cleanup by summarizing and translating could be avoided maybe if previous summarization was more efficient.
-  const summarized = await summarizeAndTranslate(result)
+    // const urls = await search(input.product, 1)
+    const model = {
+      max_tokens: 500,
+      model: "text-ada-001",
+    }
+    const result = await crawlAndSummarizeUrls({
+      urls: [], //urls.map((url: Url) => url.url),
+      summarizer: (str) => summarizeProduct(str, input.product, model),
+      maxChunkSize: 17000,
+    })
+    // cleanup by summarizing and translating could be avoided maybe if previous summarization was more efficient.
+    const summarized = await summarizeAndTranslate(result, model)
 
-  console.log("SUMMARIZED RESULT :", summarized)
-  return summarized
+    console.log("SUMMARIZED RESULT :", summarized)
+    return summarized
+  } catch (e) {
+    console.log(e)
+  }
 }

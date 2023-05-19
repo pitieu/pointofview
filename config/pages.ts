@@ -1,4 +1,4 @@
-import { SidebarNavItem, MainNavItem } from "types"
+import { MainNavItem, SidebarNavItem } from "types"
 
 export const pages = {
   signup: {
@@ -10,17 +10,25 @@ export const pages = {
     href: "/login",
   },
   posts: {
-    title: "Posts",
+    title: "Overview",
     href: "/dashboard",
-    icon: "post",
-  }as MainNavItem,
+    icon: "barChart",
+  },
+  proList: {
+    title: "Find Professionals",
+    href: "/professionals",
+  },
+  jobs: {
+    title: "Browse Jobs",
+    href: "/jobs",
+  },
   apiKeys: {
     title: "Api Keys",
     href: "/dashboard/api-keys",
   } as MainNavItem,
   dashboard: {
-    title: "Documentation",
-    href: "/docs",
+    title: "Dashboard",
+    href: "/dashboard",
   } as MainNavItem,
   support: {
     title: "Support",
@@ -43,10 +51,10 @@ export const pages = {
     title: "Features",
     href: "/#features",
   } as MainNavItem,
-  
-  beauty: {
-    title: "Beauty",
-    href: "/#beauty",
+
+  marketplace: {
+    title: "Marketplace",
+    href: "/marketplace",
   } as MainNavItem,
 
   productReviews: {

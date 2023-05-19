@@ -61,12 +61,16 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   name          String?
+  username      String?   @unique @default(cuid())
+  usernameChanged Boolean  @default(false) @map(name: "username_changed")
   email         String?   @unique
   emailVerified DateTime?
+  bio           String?
   image         String?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
 
+  networks SocialNetwork[]
   accounts Account[]
   sessions Session[]
   apiKeys  ApiKey[]
@@ -78,6 +82,18 @@ model User {
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 
   @@map(name: "users")
+}
+
+model SocialNetwork {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  users User[]
+
+  @@map(name: "platforms")
 }
 
 model VerificationToken {
@@ -101,4 +117,38 @@ model Post {
   author User @relation(fields: [authorId], references: [id])
 
   @@map(name: "posts")
+}
+
+model Job {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  published    Boolean  @default(false)
+  
+  urls      JobUrl[]
+  credentials JobCredentials[]
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+}
+
+model JobUrl {
+  id        String   @id @default(cuid())
+  jobId     String
+  url       String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  job Job @relation(fields: [jobId], references: [id])
+}
+
+model JobCredentials {
+  id        String   @id @default(cuid())
+  jobId     String
+  label     String
+  username  String
+  password  String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  job Job @relation(fields: [jobId], references: [id])
 }

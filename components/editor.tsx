@@ -1,26 +1,28 @@
 "use client"
-import moment from "moment"
+
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import EditorJS from "@editorjs/editorjs"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Post } from "@prisma/client"
+import moment from "moment"
 import { useForm } from "react-hook-form"
 import TextareaAutosize from "react-textarea-autosize"
 import * as z from "zod"
 
 import "@/styles/editor.css"
+import { postPatchSchema } from "@/schema/post.schema"
+
 import { cn } from "@/lib/utils"
-import { postPatchSchema } from "@/lib/validations/post"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/icons"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
+
 import { AiParagraphTool } from "./gpt3-tool"
 import MarkdownTool from "./markdown-editorjs-tool"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 
 interface EditorProps {
   post: Pick<Post, "id" | "title" | "content" | "published">
@@ -107,19 +109,6 @@ export function Editor({ post }: EditorProps) {
       }
     }
   }, [isMounted, initializeEditor])
-
-  async function publishPost(data: FormData) {
-    console.log(ref.current?.blocks)
-    // await fetch(`/api/posts/${post.id}/publish`, {
-    //   method: "PATCH",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     published: data.published,
-    //   }),
-    // })
-  }
 
   async function onSubmit(data: FormData) {
     console.log("onSubmit")
