@@ -1,5 +1,3 @@
-import { MainNavItem, SidebarNavItem } from "types"
-
 export const pages = {
   signup: {
     title: "Sign Up",
@@ -14,6 +12,11 @@ export const pages = {
     href: "/dashboard",
     icon: "barChart",
   },
+  myJobs: {
+    title: "My Jobs",
+    href: "/dashboard/my-jobs",
+    icon: "myjob",
+  },
   proList: {
     title: "Find Professionals",
     href: "/professionals",
@@ -25,42 +28,43 @@ export const pages = {
   apiKeys: {
     title: "Api Keys",
     href: "/dashboard/api-keys",
-  } as MainNavItem,
+  },
   dashboard: {
     title: "Dashboard",
     href: "/dashboard",
-  } as MainNavItem,
+    icon: "dashboard",
+  },
   support: {
     title: "Support",
     href: "/support",
     disabled: true,
-  } as MainNavItem,
+  },
   billing: {
     title: "Billing",
     href: "/dashboard/billing",
     icon: "billing",
-  } as MainNavItem,
+  },
   settings: {
     title: "Settings",
     href: "/dashboard/settings",
     icon: "settings",
-  } as MainNavItem,
+  },
 
   // marketing
   features: {
     title: "Features",
     href: "/#features",
-  } as MainNavItem,
+  },
 
   marketplace: {
     title: "Marketplace",
     href: "/marketplace",
-  } as MainNavItem,
+  },
 
   productReviews: {
     title: "Product Reviews",
     href: "/#product-reviews",
-  } as MainNavItem,
+  },
 
   // docs
   gettingStartedDocs: {
@@ -71,7 +75,7 @@ export const pages = {
         href: "/docs",
       },
     ],
-  } as SidebarNavItem,
+  },
   documentationDocs: {
     title: "Documentation",
     items: [
@@ -102,7 +106,7 @@ export const pages = {
         disabled: true,
       },
     ],
-  } as SidebarNavItem,
+  },
   blogDocs: {
     title: "Blog",
     items: [
@@ -122,7 +126,7 @@ export const pages = {
         disabled: true,
       },
     ],
-  } as SidebarNavItem,
+  },
   dashboardDocs: {
     title: "Dashboard",
     items: [
@@ -157,7 +161,7 @@ export const pages = {
         disabled: true,
       },
     ],
-  } as SidebarNavItem,
+  },
   marketingDocs: {
     title: "Marketing Site",
     items: [
@@ -182,5 +186,5 @@ export const pages = {
         disabled: true,
       },
     ],
-  } as SidebarNavItem,
+  },
 }

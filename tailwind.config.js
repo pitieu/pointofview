@@ -78,5 +78,20 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    function ({ addBase, config }) {
+      addBase({
+        'input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button':
+          {
+            "-webkit-appearance": "none",
+            margin: "0",
+          },
+        'input[type="number"]': {
+          "-moz-appearance": "textfield",
+        },
+      })
+    },
+  ],
 }

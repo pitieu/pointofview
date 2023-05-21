@@ -1,0 +1,19 @@
+import { redirect } from "next/navigation"
+
+import { authOptions } from "@/lib/auth"
+import { getCurrentUser } from "@/lib/session"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+export const metadata = {
+  title: "Dashboard",
+}
+
+export default async function DashboardPage() {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    redirect(authOptions?.pages?.signIn || "/login")
+  }
+
+  return <div>My jobs</div>
+}

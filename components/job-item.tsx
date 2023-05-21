@@ -1,8 +1,8 @@
 import React from "react"
+import { JobSchemaType } from "@/schema/job.schema"
 
 import { Icons } from "@/components/icons"
 
-import { FormData } from "./forms/add-job-form"
 import { Badge } from "./ui/badge"
 import {
   Card,
@@ -15,11 +15,11 @@ import { Separator } from "./ui/separator"
 import { UserAvatar } from "./user-avatar"
 
 interface JobItemProps {
-  formData: FormData
+  formData: JobSchemaType
 }
 
 export const JobItem: React.FC<JobItemProps> = ({ formData, user }) => {
-  const avgBudgetPerUrl = () => {
+  const calcBudget = () => {
     if (formData.budget && formData.urls.length > 0) {
       return new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -43,11 +43,15 @@ export const JobItem: React.FC<JobItemProps> = ({ formData, user }) => {
       <CardContent className="space-y-4 text-sm">
         <div className="flex items-center gap-1">
           <Badge className="gap-1 bg-emerald-600 hover:bg-emerald-600">
-            {avgBudgetPerUrl() || "---"}
+            {calcBudget() || "FREE"}
           </Badge>{" "}
           <Badge variant="secondary" className="gap-1 ">
             <Icons.page width={16} height={16} />
             {formData.urls.length}
+          </Badge>
+          <Badge variant="secondary" className="gap-1 ">
+            <Icons.time width={16} height={16} />
+            {formData.deadline}
           </Badge>
         </div>
         <Separator className="my-4" />
