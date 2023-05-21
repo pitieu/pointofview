@@ -15,17 +15,17 @@ import { Separator } from "./ui/separator"
 import { UserAvatar } from "./user-avatar"
 
 interface JobItemProps {
-  formData: JobSchemaType
+  data: JobSchemaType
 }
 
-export const JobItem: React.FC<JobItemProps> = ({ formData, user }) => {
+export const JobItem: React.FC<JobItemProps> = ({ data, user }) => {
   const calcBudget = () => {
-    if (formData.budget && formData.urls.length > 0) {
+    if (data.budget && data.urls.length > 0) {
       return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         maximumFractionDigits: 0,
-      }).format(Math.floor(formData.budget * formData.urls.length))
+      }).format(Math.floor(data.budget * data.urls.length))
     }
     return 0
   }
@@ -34,10 +34,10 @@ export const JobItem: React.FC<JobItemProps> = ({ formData, user }) => {
     <Card>
       <CardHeader>
         <CardTitle className="line-clamp-2">
-          {formData.title || "Untitled"}
+          {data.title || "Untitled"}
         </CardTitle>
         <CardDescription className="line-clamp-4">
-          {formData.description || "No description"}
+          {data.description || "No description"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 text-sm">
@@ -47,16 +47,19 @@ export const JobItem: React.FC<JobItemProps> = ({ formData, user }) => {
           </Badge>{" "}
           <Badge variant="secondary" className="gap-1 ">
             <Icons.page width={16} height={16} />
-            {formData.urls.length}
+            {data.urls.length}
           </Badge>
           <Badge variant="secondary" className="gap-1 ">
             <Icons.time width={16} height={16} />
-            {formData.deadline}
+            {data.deadline}
           </Badge>
         </div>
         <Separator className="my-4" />
         <div className="flex flex-row items-center gap-4">
-          <UserAvatar user={{ name: "cho", image: "" }} className="h-8 w-8" />
+          <UserAvatar
+            user={{ name: user?.name || "cho", image: user?.image || "" }}
+            className="h-8 w-8"
+          />
           <div>Cho</div>
         </div>
       </CardContent>

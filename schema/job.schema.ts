@@ -42,3 +42,9 @@ export const jobSchema = z.object({
     )
     .optional(),
 })
+
+export type FetchMyJobType = TypeOf<typeof fetchMyJobSchema>
+
+export const fetchMyJobSchema = z.object({
+  id: z.string()
+})

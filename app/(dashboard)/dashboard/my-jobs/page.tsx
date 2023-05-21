@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 
 import { authOptions } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/session"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import MyJobList from "@/components/my-job-list"
 
 export const metadata = {
   title: "Dashboard",
@@ -15,5 +15,9 @@ export default async function DashboardPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
 
-  return <div>My jobs</div>
+  return (
+    <div>
+      <MyJobList />
+    </div>
+  )
 }

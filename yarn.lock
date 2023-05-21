@@ -1993,6 +1993,18 @@
     "@tanstack/query-core" "4.29.7"
     use-sync-external-store "^1.2.0"
 
+"@tanstack/react-table@^8.9.1":
+  version "8.9.1"
+  resolved "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.9.1.tgz"
+  integrity sha512-yHs2m6lk5J5RNcu2dNtsDGux66wNXZjEgzxos6MRCX8gL+nqxeW3ZglqP6eANN0bGElPnjvqiUHGQvdACOr3Cw==
+  dependencies:
+    "@tanstack/table-core" "8.9.1"
+
+"@tanstack/table-core@8.9.1":
+  version "8.9.1"
+  resolved "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.9.1.tgz"
+  integrity sha512-2+R83n8vMZND0q3W1lSiF7co9nFbeWbjAErFf27xwbeA9E0wtUu5ZDfgj+TZ6JzdAEQAgfxkk/QNFAKiS8E4MA==
+
 "@trpc/client@^10.26.0", "@trpc/client@10.26.0":
   version "10.26.0"
   resolved "https://registry.npmjs.org/@trpc/client/-/client-10.26.0.tgz"
@@ -6953,7 +6965,7 @@ react-day-picker@^8.7.1:
   resolved "https://registry.npmjs.org/react-day-picker/-/react-day-picker-8.7.1.tgz"
   integrity sha512-Gv426AW8b151CZfh3aP5RUGztLwHB/EyJgWZ5iMgtzbFBkjHfG6Y66CIQFMWGLnYjsQ9DYSJRmJ5S0Pg5HWKjA==
 
-react-dom@*, "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18", react-dom@^18.0.0, react-dom@^18.2.0, react-dom@>=16.8.0:
+react-dom@*, "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18", react-dom@^18.0.0, react-dom@^18.2.0, react-dom@>=16, react-dom@>=16.8.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -7028,7 +7040,7 @@ react-textarea-autosize@^8.4.1:
     use-composed-ref "^1.3.0"
     use-latest "^1.2.1"
 
-react@*, "react@^16.5.1 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18", react@^18.0.0, react@^18.2.0, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.8.0:
+react@*, "react@^16.5.1 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18", react@^18.0.0, react@^18.2.0, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16, react@>=16.8.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==

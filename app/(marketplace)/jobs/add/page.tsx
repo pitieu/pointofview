@@ -28,7 +28,7 @@ const AddJobsPage: FC<AddJobsProps> = () => {
         />
         <div className="invisible sticky top-[80px] col-span-1 h-[200px] min-w-[200px] md:visible">
           <h2 className="mb-2 text-lg font-semibold">Preview</h2>
-          <JobItem formData={formData} />
+          <JobItem data={formData} />
         </div>
       </div>
     </>

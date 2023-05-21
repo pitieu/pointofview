@@ -278,6 +278,7 @@ export function AddJobForm({ change, className, ...props }: AddJobFormProps) {
             {urlFields.length < 21 && (
               <Button
                 type="button"
+                variant="secondary"
                 className="gap-1"
                 onClick={() =>
                   appendUrl({ jobId: `url-${urlFields.length}`, url: "" })
@@ -350,6 +351,7 @@ export function AddJobForm({ change, className, ...props }: AddJobFormProps) {
             {credentialFields.length < 21 && (
               <Button
                 type="button"
+                variant="secondary"
                 className="gap-1"
                 onClick={() =>
                   appendCredential({
