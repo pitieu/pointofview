@@ -1,10 +1,9 @@
 "use client"
 
 import { FC } from "react"
-import { JobSchemaType } from "@/schema/job.schema"
 
 import { trpc } from "@/lib/trpc"
-import { columns, tableColumns } from "@/components/tables/my-jobs/columns"
+import { columns } from "@/components/tables/my-jobs/columns"
 import { DataTable } from "@/components/tables/my-jobs/data-table"
 
 interface MyJobListProps {}

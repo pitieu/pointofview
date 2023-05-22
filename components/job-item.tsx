@@ -51,7 +51,12 @@ export const JobItem: React.FC<JobItemProps> = ({ data, user }) => {
           </Badge>
           <Badge variant="secondary" className="gap-1 ">
             <Icons.time width={16} height={16} />
-            {data.deadline}
+            {data.deadline && data.deadline[0] > 0
+              ? `${data.deadline[0]}`
+              : "No deadline"}
+            {data.deadline &&
+              data.deadline[0] > 0 &&
+              (data.deadline[0] == 1 ? " day" : " days")}
           </Badge>
         </div>
         <Separator className="my-4" />

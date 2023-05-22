@@ -22,7 +22,7 @@ export async function createJobHandler({
       title: input.title,
       published: input.published,
       budget: input.budget,
-      deadline: input.deadline,
+      deadline: (input.deadline && input.deadline[0]) || 0,
       description: input.description,
       urls: {
         create: input.urls.map((el) => {
@@ -105,10 +105,9 @@ export async function deleteMyJobHandler({
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
-
   try {
     // Begin a transaction
-     await db.$transaction([
+    await db.$transaction([
       db.jobUrl.deleteMany({
         where: {
           jobId: input.id,
