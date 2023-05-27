@@ -141,6 +141,8 @@ model JobUrl {
   id        String   @id @default(cuid())
   jobId     String
   url       String
+  image     String?
+  thumbnail String?
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @map(name: "updated_at")
 

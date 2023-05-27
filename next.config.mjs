@@ -4,7 +4,17 @@ import "./env.mjs"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack(config) {
+  webpack(config, { isServer }) {
+    // Fixes npm packages that depend on `fs` module
+    if (!isServer) {
+      config.resolve.fallback.fs = false
+    }
+    config.module.rules.push({
+      test: /\.map$/,
+      use: {
+        loader: "ignore-loader",
+      },
+    })
     config.resolve.alias.encoding = "encoding"
     return config
   },

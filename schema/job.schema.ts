@@ -3,7 +3,7 @@ import { TypeOf, z } from "zod"
 export type JobSchemaType = TypeOf<typeof jobSchema>
 
 const urlPattern = new RegExp(
-  "^(https?:\\/\\/)?" + // protocol
+  "^((https?:\\/\\/www\\.)|(www\\.))" + // protocol with www or just www
     "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name and extension
     "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
     "(\\:\\d+)?" + // port
@@ -14,7 +14,7 @@ const urlPattern = new RegExp(
 )
 
 const CustomUrl = z.string().refine((value) => urlPattern.test(value), {
-  message: "Invalid URL",
+  message: "Invalid URL. Make sure to include www. at the start of the url.",
 })
 
 export const jobSchema = z.object({

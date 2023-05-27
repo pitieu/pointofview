@@ -13,9 +13,7 @@ export const isValidUrl = (url: string) => {
   }
 }
 
-export const config = {
-  runtime: "edge",
-}
+export const runtime = "edge"
 
 export default async function handler(req: NextRequest, ev: NextFetchEvent) {
   if (req.method === "GET") {

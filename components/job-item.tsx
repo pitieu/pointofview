@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { JobSchemaType } from "@/schema/job.schema"
+import { toCurrencyFormat } from "@/utils/number-helpers"
 
 import { Icons } from "@/components/icons"
 
@@ -19,16 +20,12 @@ interface JobItemProps {
 }
 
 export const JobItem: React.FC<JobItemProps> = ({ data, user }) => {
-  const calcBudget = () => {
+  const calcBudget = useCallback(() => {
     if (data.budget && data.urls.length > 0) {
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        maximumFractionDigits: 0,
-      }).format(Math.floor(data.budget * data.urls.length))
+      return toCurrencyFormat(Math.floor(data.budget * data.urls.length))
     }
     return 0
-  }
+  }, [data.budget, data.urls.length])
 
   return (
     <Card>

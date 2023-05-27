@@ -27,6 +27,9 @@ export const env = createEnv({
     PINECONE_API_KEY: z.string().min(1),
     PINECONE_INDEX_NAME: z.string().min(1),
     PINECONE_NAMESPACE: z.string().min(1),
+    SCREENSHOT_API: z.string().min(1),
+    SCREENSHOT_SECRET: z.string().min(1),
+    SCREENSHOT_ENABLED: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1),
@@ -55,5 +58,8 @@ export const env = createEnv({
     PINECONE_API_KEY: process.env.PINECONE_API_KEY,
     PINECONE_INDEX_NAME: process.env.PINECONE_INDEX_NAME,
     PINECONE_NAMESPACE: process.env.PINECONE_NAMESPACE,
+    SCREENSHOT_API: process.env.SCREENSHOT_API,
+    SCREENSHOT_SECRET: process.env.SCREENSHOT_SECRET,
+    SCREENSHOT_ENABLED: process.env.SCREENSHOT_ENABLED,
   },
 })

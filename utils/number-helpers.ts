@@ -82,6 +82,14 @@ export function numberWithCommas(value: number | string | undefined) {
     : ""
 }
 
+export function toCurrencyFormat(currency: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(currency)
+}
+
 export function isNumeric(value?: string | string[]) {
   return !isNaN(Number(value))
 }

@@ -1,7 +1,11 @@
-"use client"
+"use client";
 
+import { Suspense } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { JobSchemaType } from "@/schema/job.schema"
+import { toCurrencyFormat } from "@/utils/number-helpers"
+import { JobUrl } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowDownAZ, ArrowUpAZ, MoreHorizontal } from "lucide-react"
 import moment from "moment"
@@ -26,9 +30,29 @@ export type tableColumns = {
   published: boolean
   createdAt: Date
   jobs?: number
+  urls: JobUrl[]
 }
 
 export const columns: ColumnDef<tableColumns>[] = [
+  {
+    accessorKey: "urls",
+    header: "",
+    cell: ({ row }) => {
+      if (!row.original.urls.length) return null
+      if (!row.original.urls[0].image) return null
+      return (
+        <Suspense>
+          <Image
+            src={row.original.urls[0].image}
+            width={200}
+            height={200}
+            alt="website thumbnail"
+          />
+        </Suspense>
+      )
+    },
+  },
+
   {
     accessorKey: "title",
     header: ({ column }) => (
@@ -36,18 +60,24 @@ export const columns: ColumnDef<tableColumns>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <Link href={`dashboard/my-jobs/${row.original.id}`}>
-          {row.original.title}
-        </Link>
+        <div className="flex flex-col items-start gap-2">
+          <Link
+            href={`dashboard/my-jobs/${row.original.id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {row.original.title}
+          </Link>
+        </div>
       )
     },
   },
+
   {
     accessorKey: "budget",
     header: "Budget",
     cell: ({ row }) => {
       if (row.original.budget === 0) return <span>FREE</span>
-      return <span>{row.original.budget} USD</span>
+      return <span>{toCurrencyFormat(row.original.budget || 0)}</span>
     },
   },
   {

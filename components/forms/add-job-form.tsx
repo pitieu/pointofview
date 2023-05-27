@@ -48,8 +48,8 @@ export function AddJobForm({ change, className, ...props }: AddJobFormProps) {
 
   const createJob = trpc.job.createJob.useMutation({
     onSuccess: () => {
-      router.refresh()
-      router.push(`/dashboard/my-jobs`)
+      // router.refresh()
+      // router.push(`/dashboard/my-jobs`)
     },
     onError: () => {
       toast({
@@ -290,7 +290,7 @@ export function AddJobForm({ change, className, ...props }: AddJobFormProps) {
             </div>
           </CardContent>
           <CardFooter>
-            {urlFields.length < 21 && (
+            {urlFields.length < 5 && (
               <Button
                 type="button"
                 variant="secondary"

@@ -1,9 +1,17 @@
-import { FetchMyJobType, JobSchemaType } from "@/schema/job.schema"
-import { TRPCError } from "@trpc/server"
+import { FetchMyJobType, JobSchemaType } from "@/schema/job.schema";
+import { TRPCError } from "@trpc/server";
 import lodash from "lodash"
 
+import { env } from "@/env.mjs"
 import { db } from "@/lib/db"
+import { createThumbnailFromUrl } from "@/lib/image"
 import { Context } from "@/app/api/trpc/trpc-router"
+
+type UrlData = {
+  image: string
+  thumbnail: string
+  url: string
+}
 
 export async function createJobHandler({
   ctx,
@@ -12,9 +20,39 @@ export async function createJobHandler({
   ctx: Context
   input: JobSchemaType
 }) {
-  console.log("createJobHandler")
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
+  let urls: UrlData[] = []
+
+  if (env.SCREENSHOT_ENABLED == "false") {
+    urls = input.urls.map((el) => {
+      return {
+        url: el.url,
+        image:
+          "09a8b930c8b79e7c313e5e741e1d59c39ae91bc1f10cdefa68b47bf77519be57.gif",
+        thumbnail:
+          "09a8b930c8b79e7c313e5e741e1d59c39ae91bc1f10cdefa68b47bf77519be57_tiny.gif",
+      }
+    })
+  } else {
+    // Todo: move this to a queue system
+    for (const webUrl in input.urls) {
+      try {
+        const { url, thumbnail } = await createThumbnailFromUrl(
+          "https://" + input?.urls[webUrl].url
+        )
+        urls.push({
+          image: url,
+          thumbnail: thumbnail,
+          url: "https://" + input.urls[webUrl].url,
+        })
+      } catch (e) {
+        console.log(e)
+        console.log("failed url ", input.urls[webUrl].url)
+        urls.push({ image: "", thumbnail: "", url: input.urls[webUrl].url })
+      }
+    }
+  }
 
   // Todo: if it's publish call notifications?
   const job = await db.job.create({
@@ -25,9 +63,7 @@ export async function createJobHandler({
       deadline: (input.deadline && input.deadline[0]) || 0,
       description: input.description,
       urls: {
-        create: input.urls.map((el) => {
-          return { url: el.url }
-        }),
+        create: urls,
       },
       credentials: {
         create: input.credentials?.map((el) => {
@@ -105,6 +141,11 @@ export async function deleteMyJobHandler({
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
+  if (env.SCREENSHOT_ENABLED == "false") {
+    console.log("don't delete test image")
+  } else {
+    // todo: delete images related to this job
+  }
   try {
     // Begin a transaction
     await db.$transaction([
