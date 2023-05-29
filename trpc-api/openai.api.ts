@@ -1,11 +1,14 @@
-import { openaiCompletion } from "@/lib/openai"
-import { Context } from "@/app/api/trpc/trpc-router"
-import { PromptType, PromptBananaType } from "@/schema/openai.schema"
-import * as banana from "@banana-dev/banana-dev"
-import fs from "fs"
+import fs from "fs";
+import { PromptBananaType, PromptType } from "@/schema/openai.schema";
+import * as banana from "@banana-dev/banana-dev";
 
-const apiKey = "5b02dd77-409b-4741-9611-61af8f468342"
-const modelKey = "2e2fab85-4b1f-425b-b3e1-17bdadc2838b"
+
+
+import { openaiCompletion } from "@/lib/openai";
+import { Context } from "@/app/api/trpc/trpc-router"
+
+const apiKey = process.env.BANANA_API_KEY as string
+const modelKey = process.env.BANANA_MODEL_KEY as string
 
 export async function promptHandler({
   ctx,
