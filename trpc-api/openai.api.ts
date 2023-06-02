@@ -2,8 +2,6 @@ import fs from "fs";
 import { PromptBananaType, PromptType } from "@/schema/openai.schema";
 import * as banana from "@banana-dev/banana-dev";
 
-
-
 import { openaiCompletion } from "@/lib/openai";
 import { Context } from "@/app/api/trpc/trpc-router"
 

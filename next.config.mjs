@@ -18,6 +18,21 @@ const nextConfig = {
     config.resolve.alias.encoding = "encoding"
     return config
   },
+  async rewrites() {
+    return [
+      // Rewrite rule for subdomains
+      {
+        source: '/:path*',
+        destination: '/api/markup/:path*',
+        has: [
+          {
+            type: 'host',
+            value: '(.*).localhost',
+          },
+        ],
+      },
+    ];
+  },
   reactStrictMode: true,
   images: {
     domains: ["avatars.githubusercontent.com"],

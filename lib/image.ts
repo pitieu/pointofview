@@ -1,9 +1,13 @@
-import { exec } from "child_process"
-import * as crypto from "crypto"
-import * as fs from "fs"
-import * as path from "path"
-import * as screenshotone from "screenshotone-api-sdk"
-import sharp from "sharp"
+import { exec } from "child_process";
+import * as crypto from "crypto";
+import * as fs from "fs";
+import * as path from "path";
+import * as screenshotone from "screenshotone-api-sdk";
+import sharp from "sharp";
+
+
+
+
 
 const __dirname = path.resolve()
 
@@ -35,8 +39,8 @@ export const createThumbnailFromUrl = async (
   await resizeGif(`${urlId}`, 200)
 
   return Promise.resolve({
-    url: `images/uploads/${url}.gif`,
-    thumbnail: `images/uploads/${url}_tiny.gif`,
+    url: `/images/uploads/${urlId}.gif`,
+    thumbnail: `/images/uploads/${urlId}_tiny.gif`,
     image: buffer.toString("base64"),
   })
 }
@@ -81,7 +85,7 @@ export const resizeGif = async (
         console.log(`stderr: ${stderr}`)
         return reject(stderr)
       }
-      console.log(`stdout: ${stdout}`)
+      console.log(`file: ${inputPath}`)
       resolve()
     })
   })

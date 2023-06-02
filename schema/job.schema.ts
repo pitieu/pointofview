@@ -1,17 +1,7 @@
+import { urlPattern } from "@/utils/string"
 import { TypeOf, z } from "zod"
 
 export type JobSchemaType = TypeOf<typeof jobSchema>
-
-const urlPattern = new RegExp(
-  "^((https?:\\/\\/www\\.)|(www\\.))" + // protocol with www or just www
-    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name and extension
-    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-    "(\\:\\d+)?" + // port
-    "(\\/[-a-z\\d%_.~+]*)*" + // path
-    "(\\?[;&amp;a-z\\d%_.~+=-]*)?" + // query string
-    "(\\#[-a-z\\d_]*)?$",
-  "i" // fragment locator
-)
 
 const CustomUrl = z.string().refine((value) => urlPattern.test(value), {
   message: "Invalid URL. Make sure to include www. at the start of the url.",

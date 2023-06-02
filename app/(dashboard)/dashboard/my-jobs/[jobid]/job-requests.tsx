@@ -24,7 +24,7 @@ const JobRequests: FC<JobRequestsProps> = ({ jobid }) => {
 
   return (
     <div>
-      Job requests
+      job-requests
       {/* {JSON.stringify(job)} */}
     </div>
   )

@@ -1,5 +1,6 @@
-import { summarizeWebsite } from "@/lib/openai"
 import { CreateCompletionRequest, CreateCompletionRequestPrompt } from "openai"
+
+import { summarizeWebsite } from "@/lib/openai"
 
 const MAX_WEB_TEXT_SIZE = 16000 // we use a max text size to prevent from calling OpenAi summarize too many times
 
@@ -77,3 +78,14 @@ export const summarizeChunks = async (
   if (!summarized) return ""
   return summarized
 }
+
+export const urlPattern = new RegExp(
+  "^((https?:\\/\\/www\\.)|(www\\.))" + // protocol with www or just www
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name and extension
+    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+    "(\\:\\d+)?" + // port
+    "(\\/[-a-z\\d%_.~+]*)*" + // path
+    "(\\?[;&amp;a-z\\d%_.~+=-]*)?" + // query string
+    "(\\#[-a-z\\d_]*)?$",
+  "i" // fragment locator
+)

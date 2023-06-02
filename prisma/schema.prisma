@@ -120,14 +120,26 @@ model Post {
   @@map(name: "posts")
 }
 
+enum JobState {
+  PUBLIC
+  PRIVATE
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+
 model Job {
   id           String   @id @default(cuid())
   userId       String
   title        String
   budget       Int?     @default(0)
-  deadline     Int?     @default(0)
+  deadline     Int?     @default(2)
   description  String?  @default("")
   published    Boolean  @default(false)
+  state        JobState? @default(PRIVATE)
+  status       JobStatus? @default(OPEN)
 
   urls        JobUrl[]
   credentials JobCredentials[]

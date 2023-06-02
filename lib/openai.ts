@@ -1,10 +1,13 @@
+"use server"
+
 import {
   Configuration,
-  OpenAIApi,
   CreateChatCompletionRequest,
   CreateCompletionRequest,
   CreateCompletionRequestPrompt,
+  OpenAIApi,
 } from "openai"
+
 import { env } from "@/env.mjs"
 
 const configuration = new Configuration({
