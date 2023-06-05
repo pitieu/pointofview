@@ -1,75 +1,34 @@
-"use client"
+"use client";
 
 import React, { useEffect, useRef, useState } from "react"
+import { useToggle } from "@mantine/hooks"
+import { Monitor, Smartphone, Tablet } from "lucide-react"
 
-interface Props {}
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
-const CommentSidebar: React.FC<Props> = () => {
+interface Props {
+  id: string
+  host: string
+}
+
+const CommentSidebar: React.FC<Props> = ({ id, host }: Props) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const commentRef = useRef<HTMLInputElement>(null)
   const commentsRef = useRef<HTMLDivElement>(null)
-  const [iframeUrl, setIframeUrl] = useState("")
-  const [preventNavigation, setPreventNavigation] = useState(false)
+  const [navigationEnabled, toggleNavigation] = useToggle()
+  const [mode, setMode] = useState<"desktop" | "tablet" | "mobile">("desktop")
+
+  const url = `http://${id}.p.${host}`
 
   useEffect(() => {
-    const iframe = iframeRef.current
+    window.addEventListener("message", function (event) {
+      // check if it's coming from same host
+      if (event.origin !== url || !event.data?.type) return
 
-    if (iframe) {
-      iframe.addEventListener("load", function () {
-        const innerDoc = iframe.contentDocument
-          ? iframe.contentDocument
-          : iframe.contentWindow?.document
-
-        if (innerDoc) {
-          const overlay = innerDoc.createElement("div")
-          overlay.style.position = "absolute"
-          overlay.style.outline = "1px dotted rgba(255, 0, 0, 0.5)" // semi-transparent red
-          overlay.style.pointerEvents = "none" // allows mouse events to pass through to elements below
-          innerDoc.body.appendChild(overlay)
-
-          innerDoc.body.addEventListener("mouseover", function (event) {
-            // const targetElement = event.target as HTMLElement
-            // targetElement.style.outline = "1px dotted red"
-            const targetElement = event.target as HTMLElement
-
-            // Position the overlay to cover the target element
-            const rect = targetElement.getBoundingClientRect()
-            const scrollTop =
-              innerDoc.documentElement.scrollTop || innerDoc.body.scrollTop
-            const scrollLeft =
-              innerDoc.documentElement.scrollLeft || innerDoc.body.scrollLeft
-
-            overlay.style.top = `${rect.top + scrollTop}px`
-            overlay.style.left = `${rect.left + scrollLeft}px`
-            overlay.style.width = `${rect.width}px`
-            overlay.style.height = `${rect.height}px`
-          })
-
-          innerDoc.body.addEventListener("mouseout", function (event) {
-            // const targetElement = event.target as HTMLElement
-            // targetElement.style.outline = ""
-            // Hide the overlay
-            overlay.style.width = "0"
-            overlay.style.height = "0"
-          })
-          // prevent a link navigation
-          innerDoc.body.addEventListener("click", function (event) {
-            console.log(preventNavigation)
-            if (preventNavigation) {
-              event.preventDefault()
-            }
-          })
-        }
-      })
-
-      window.addEventListener("message", function (event) {
-        if (event.data && event.data.url) {
-          setIframeUrl(event.data.url)
-          console.log(event.data.url)
-        }
-      })
-    }
-  }, [preventNavigation])
+      console.log("Received message:", event.data)
+    })
+  }, [])
 
   const addComment = () => {
     const comment = commentRef.current
@@ -84,18 +43,59 @@ const CommentSidebar: React.FC<Props> = () => {
     }
   }
 
+  const refreshIframe = () => {
+    let iframeWindow = iframeRef?.current?.contentWindow
+    if (iframeWindow) {
+      iframeWindow.postMessage(
+        { type: "preventNavigation", value: navigationEnabled },
+        url
+      )
+      toggleNavigation()
+    }
+  }
+
   return (
     <div>
-      <div className="p-4">
-        {" "}
-        <button
-          onClick={() => setPreventNavigation((prev) => !prev)}
+      <div className="flex flex-row items-center gap-2 p-4">
+        <div className="flex flex-row items-center">
+          <Button
+            variant={"ghost"}
+            className={cn("px-2", {
+              "hover:text-blue-700": mode === "desktop",
+              "text-blue-500": mode === "desktop",
+            })}
+            onClick={() => setMode("desktop")}
+          >
+            <Monitor width={24} height={24} />
+          </Button>
+          <Button
+            variant={"ghost"}
+            className={cn("px-2", {
+              "hover:text-blue-700": mode === "tablet",
+              "text-blue-500": mode === "tablet",
+            })}
+            onClick={() => setMode("tablet")}
+          >
+            <Tablet width={24} height={24} />
+          </Button>
+          <Button
+            variant={"ghost"}
+            className={cn("px-2", {
+              "hover:text-blue-700": mode === "mobile",
+              "text-blue-500": mode === "mobile",
+            })}
+            onClick={() => setMode("mobile")}
+          >
+            <Smartphone width={24} height={24} />
+          </Button>
+        </div>
+        <Button
+          variant={"outline"}
+          onClick={() => refreshIframe()}
           className=" ml-2 px-4 py-2 text-white"
-          style={{ backgroundColor: preventNavigation ? "green" : "red" }}
         >
-          {preventNavigation ? "Disable" : "Enable"} Link Prevention
-        </button>{" "}
-        {preventNavigation ? "Allowed Navigation" : "Not allowed Navigation"}
+          {navigationEnabled ? "Disable" : "Enable"} Link Prevention
+        </Button>
       </div>
       <div className="flex">
         <div className="w-1/3 border-r p-4">
@@ -114,12 +114,40 @@ const CommentSidebar: React.FC<Props> = () => {
           </div>
           <div ref={commentsRef}>{/* Comments will be appended here */}</div>
         </div>
-        <div className="w-2/3">
-          <iframe
-            ref={iframeRef}
-            src={`http://asda.localhost:3000/api/markup/asda/adasd`}
-            className="h-screen w-full"
-          ></iframe>
+        <div
+          className={cn(
+            "flex w-2/3 items-center justify-center border-4 border-green-600 bg-slate-50",
+            {
+              // "": mode === "desktop",
+              "": mode === "tablet" || mode === "mobile",
+            }
+          )}
+        >
+          <div
+            className={cn("bg-white", {
+              "h-screen w-full": mode === "desktop",
+              "my-8 rounded-3xl border-2 border-gray-50 p-8 pt-24 shadow-md":
+                mode === "tablet" || mode === "mobile",
+            })}
+          >
+            <div
+              className={cn("flex h-full w-full items-center justify-center", {
+                "border-2 border-gray-50":
+                  mode === "tablet" || mode === "mobile",
+              })}
+            >
+              <iframe
+                ref={iframeRef}
+                sandbox="allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox"
+                src={`${url}/api/markup`}
+                className={cn({
+                  "h-screen w-full": mode === "desktop",
+                  "h-[768px] w-[576px]": mode === "tablet",
+                  "h-[667px] w-[375px]": mode === "mobile",
+                })}
+              ></iframe>
+            </div>
+          </div>
         </div>
       </div>
     </div>

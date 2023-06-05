@@ -27,7 +27,17 @@ const nextConfig = {
         has: [
           {
             type: 'host',
-            value: '(.*).localhost',
+            value: '(.*).p.localhost',
+          },
+        ],
+      },
+      {
+        source: '/',
+        destination: '/api/markup/',
+        has: [
+          {
+            type: 'host',
+            value: '(.*).p.localhost',
           },
         ],
       },
