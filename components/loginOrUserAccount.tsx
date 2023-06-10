@@ -6,7 +6,11 @@ import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { UserAccountNav } from "@/components/navigation/user-account-nav"
 
-export default function LoginOrUserAccount(user: User | undefined) {
+export default function LoginOrUserAccount({
+  user,
+}: {
+  user: User | undefined
+}) {
   return (
     <>
       {!user ? (

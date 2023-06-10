@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { Suspense } from "react"
 import Image from "next/image"
@@ -43,7 +43,10 @@ export const columns: ColumnDef<tableColumns>[] = [
       return (
         <Suspense>
           <Image
-            src={row.original.urls[0].image}
+            src={
+              row.original.urls[0].thumbnail ||
+              "/images/placeholder_200x200.jpg"
+            }
             width={200}
             height={200}
             alt="website thumbnail"
@@ -62,7 +65,7 @@ export const columns: ColumnDef<tableColumns>[] = [
       return (
         <div className="flex flex-col items-start gap-2">
           <Link
-            href={`dashboard/my-jobs/${row.original.id}`}
+            href={`markup/${row.original.id}`}
             className="text-blue-600 hover:underline"
           >
             {row.original.title}
@@ -118,7 +121,7 @@ export const columns: ColumnDef<tableColumns>[] = [
     id: "actions",
     cell: ({ row, table }) => {
       const columnId = row.original.id
-      const deleteRow = trpc.job.deleteMyJobHandler.useMutation({
+      const deleteRow = trpc.job.myJob.delete.useMutation({
         onSuccess: () => {
           table.options.meta?.refetch()
         },

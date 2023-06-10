@@ -5,7 +5,6 @@ import { getCurrentUser } from "@/lib/session"
 import LoginOrUserAccount from "@/components/loginOrUserAccount"
 import { MainNav } from "@/components/navigation/main-nav"
 import { DashboardNav } from "@/components/navigation/nav"
-import { UserAccountNav } from "@/components/navigation/user-account-nav"
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -28,7 +27,14 @@ export default async function DashboardLayout({
           <LoginOrUserAccount user={user} />
         </div>
       </header>
-      <div className="container mx-auto bg-gray-50 py-6">{children}</div>
+      <div className="grid flex-1 md:grid-cols-[200px_1fr]">
+        <aside className="hidden w-[200px] flex-col py-6 md:flex">
+          <DashboardNav items={dashboardConfig.sidebarNav} />
+        </aside>
+        <main className="flex w-full flex-1 flex-col overflow-hidden ">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

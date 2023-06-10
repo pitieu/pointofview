@@ -15,7 +15,7 @@ const Myjob: FC<MyjobProps> = ({ jobid }) => {
     data: job = { title: null },
     isLoading,
     refetch,
-  } = trpc.job.fetchMyJobHandler.useQuery(
+  } = trpc.job.myJob.fetch.useQuery(
     { id: jobid },
     { trpc: { abortOnUnmount: true } }
   )
@@ -25,7 +25,7 @@ const Myjob: FC<MyjobProps> = ({ jobid }) => {
 
   return (
     <div className="flex flex-row gap-2">
-      <div className="w-4/12 bg-yellow-700 flex-col flex">
+      <div className="flex w-4/12 flex-col bg-yellow-700">
         <div className="flex flex-row gap-4">
           {job?.urls.map((urlData) => (
             <div className="flex flex-col gap-4">

@@ -13,7 +13,7 @@ const MyJobList: FC<MyJobListProps> = ({}) => {
     data: jobs = [],
     isLoading,
     refetch,
-  } = trpc.job.listMyJobHandler.useQuery({}, { trpc: { abortOnUnmount: true } })
+  } = trpc.job.myJob.list.useQuery({}, { trpc: { abortOnUnmount: true } })
 
   return (
     <div>

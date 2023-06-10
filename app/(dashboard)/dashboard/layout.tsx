@@ -2,10 +2,9 @@ import { redirect } from "next/navigation"
 
 import { dashboardConfig } from "@/config/dashboard"
 import { getCurrentUser } from "@/lib/session"
+import LoginOrUserAccount from "@/components/loginOrUserAccount"
 import { MainNav } from "@/components/navigation/main-nav"
 import { DashboardNav } from "@/components/navigation/nav"
-import { UserAccountNav } from "@/components/navigation/user-account-nav"
-import { SiteFooter } from "@/components/site-footer"
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -25,13 +24,7 @@ export default async function DashboardLayout({
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
           <MainNav items={dashboardConfig.mainNav} />
-          <UserAccountNav
-            user={{
-              name: user.name,
-              image: user.image,
-              email: user.email,
-            }}
-          />
+          <LoginOrUserAccount user={user} />
         </div>
       </header>
       <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">

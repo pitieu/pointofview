@@ -1,5 +1,10 @@
-import { FetchMyJobType, JobSchemaType } from "@/schema/job.schema";
-import { TRPCError } from "@trpc/server";
+import {
+  AddCommentSchemaType,
+  CommentSchemaType,
+  FetchMyJobType,
+  JobSchemaType,
+} from "@/schema/job.schema"
+import { TRPCError } from "@trpc/server"
 import lodash from "lodash"
 
 import { env } from "@/env.mjs"
@@ -172,4 +177,70 @@ export async function deleteMyJobHandler({
   }
 
   return "Success"
+}
+
+export async function fetchCommentsHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context
+  input: FetchMyJobType
+}) {
+  const userId = ctx.session?.user.id as string
+  if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
+  console.log(input.id)
+  const job = await db.job.findUnique({
+    where: {
+      jobId: input.id,
+    },
+    include: {
+      // urls: true,
+      // credentials: true,
+      comments: true,
+    },
+  })
+
+  return job ? job : []
+}
+
+export async function addCommentHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context
+  input: AddCommentSchemaType
+}) {
+  try {
+    const userId = ctx.session?.user.id as string
+    if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
+
+    const newPin = await db.commentPin.create({
+      data: {
+        index: input.index,
+        title: input.title,
+        url: input.url,
+        xpath: input.xpath,
+        screenMode: input.screenMode,
+        oldBounds: input.oldBounds,
+        color: input.color,
+        left: input.left,
+        top: input.top,
+        ownerId: userId,
+      },
+    })
+
+    const job = await db.jobComments.create({
+      data: {
+        comment: input.comment,
+        jobId: input.jobId,
+        pinId: newPin.id,
+      },
+    })
+    console.log(job)
+
+    return job
+  } catch (e) {
+    console.log(e)
+    return ""
+  }
 }

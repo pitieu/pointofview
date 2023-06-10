@@ -1,6 +1,7 @@
 import React, { useCallback } from "react"
 import { JobSchemaType } from "@/schema/job.schema"
 import { toCurrencyFormat } from "@/utils/number-helpers"
+import { User } from "@prisma/client"
 
 import { Icons } from "@/components/icons"
 
@@ -17,16 +18,10 @@ import { UserAvatar } from "./user-avatar"
 
 interface JobItemProps {
   data: JobSchemaType
+  user: User
 }
 
 export const JobItem: React.FC<JobItemProps> = ({ data, user }) => {
-  const calcBudget = useCallback(() => {
-    if (data.budget && data.urls.length > 0) {
-      return toCurrencyFormat(Math.floor(data.budget * data.urls.length))
-    }
-    return 0
-  }, [data.budget, data.urls.length])
-
   return (
     <Card>
       <CardHeader>
@@ -40,12 +35,8 @@ export const JobItem: React.FC<JobItemProps> = ({ data, user }) => {
       <CardContent className="space-y-4 text-sm">
         <div className="flex items-center gap-1">
           <Badge className="gap-1 bg-emerald-600 hover:bg-emerald-600">
-            {calcBudget() || "FREE"}
+            {data.budget || "FREE"}
           </Badge>{" "}
-          <Badge variant="secondary" className="gap-1 ">
-            <Icons.page width={16} height={16} />
-            {data.urls.length}
-          </Badge>
           <Badge variant="secondary" className="gap-1 ">
             <Icons.time width={16} height={16} />
             {data.deadline && data.deadline[0] > 0

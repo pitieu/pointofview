@@ -140,35 +140,50 @@ model Job {
   published    Boolean  @default(false)
   state        JobState? @default(PRIVATE)
   status       JobStatus? @default(OPEN)
+  url          String
+  image        String?
+  thumbnail    String?
 
-  urls        JobUrl[]
-  credentials JobCredentials[]
+  comments    JobComments[]
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @map(name: "updated_at")
 
   user User @relation(fields: [userId], references: [id])
 }
 
-model JobUrl {
-  id        String   @id @default(cuid())
-  jobId     String
-  url       String
-  image     String?
-  thumbnail String?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-
-  job Job @relation(fields: [jobId], references: [id])
+enum ScreenMode {
+  desktop
+  tablet
+  mobile
 }
 
-model JobCredentials {
-  id        String   @id @default(cuid())
-  jobId     String
-  label     String?  @default("No Label")
-  username  String
-  password  String
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-
-  job Job @relation(fields: [jobId], references: [id])
+model CommentPin {
+  id           String       @id @default(cuid())
+  index        String
+  title        String?
+  url          String
+  xpath        String
+  screenMode   ScreenMode
+  oldBounds    String
+  color        String?
+  left         String
+  top          String
+  ownerId      String
+  pinDirection String?
+  
+  jobComment   JobComments? 
 }
+
+model JobComments {
+  id           String       @id @default(cuid())
+  pinId        String       @unique
+  pin          CommentPin   @relation(fields: [pinId], references: [id])
+
+  comment      String
+
+  createdAt    DateTime     @default(now()) @map(name: "created_at")
+  updatedAt    DateTime     @default(now()) @map(name: "updated_at")
+  jobId        String
+  job          Job          @relation(fields: [jobId], references: [id])
+}
+

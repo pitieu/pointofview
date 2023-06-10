@@ -22,6 +22,7 @@ interface QuillEditorProps {
   className?: string
   top: string
   left: string
+  isLoading: boolean
 }
 
 const QuillEditor = React.forwardRef(
@@ -33,6 +34,7 @@ const QuillEditor = React.forwardRef(
       left,
       className,
       onClose,
+      isLoading,
       ...props
     }: QuillEditorProps,
     ref
@@ -57,18 +59,21 @@ const QuillEditor = React.forwardRef(
         <ReactQuill
           // @ts-ignore
           // ref={ref}
+          isLoading={isLoading}
           theme="snow"
           onChange={setValue}
           modules={modules}
           placeholder="Write your comment here..."
           className={"h-[200px] w-full border-t-0 border-gray-100"}
-          // {...props}
+          {...props}
         />
         <div className="mt-[50px] flex justify-end gap-4">
-          <Button variant={"ghost"} onClick={onClose}>
+          <Button disabled={isLoading} variant={"ghost"} onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onSave}>Save</Button>
+          <Button disabled={isLoading} onClick={() => onSave(value)}>
+            Save
+          </Button>
         </div>
       </div>
     )

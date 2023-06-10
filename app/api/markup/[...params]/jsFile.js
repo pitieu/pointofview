@@ -6,38 +6,40 @@ export default function def(host, userId) {
   let pinElementDragged = null
   let isDragging = false
   let isCommenting = false
-  let pins = {
-    desktop: [],
-    tablet: [],
-    mobile: [],
+  let highlight
+  let dragOver
+  let pins = []
+
+  function debounce(func, delay) {
+    let debounceTimer
+    return function () {
+      const context = this
+      const args = arguments
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => func.apply(context, args), delay)
+    }
   }
 
   function getXPath(element) {
-    if (!element) return ""
-    if (element.id && element.id !== "") {
-      return '//*[@id="' + element.id + '"]'
+    if (element.tagName == "HTML") return "/HTML[1]"
+    if (element === document.body) return "/HTML[1]/BODY[1]"
+
+    let ix = 0
+    let siblings = element.parentNode.childNodes
+    for (let i = 0; i < siblings.length; i++) {
+      let sibling = siblings[i]
+      if (sibling === element)
+        return (
+          getXPath(element.parentNode) +
+          "/" +
+          element.tagName +
+          "[" +
+          (ix + 1) +
+          "]"
+        )
+      if (sibling.nodeType === 1 && sibling.tagName === element.tagName) ix++
     }
-    if (element === document.body) {
-      return element.tagName.toLowerCase()
-    }
-    var ix = 0,
-      count = 0
-    var siblings = element.parentNode ? element.parentNode.childNodes : []
-    for (var i = 0; i < siblings.length; i++) {
-      var sibling = siblings[i]
-      if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
-        count++
-        if (sibling === element) {
-          ix = count
-        }
-      }
-    }
-    return (
-      getXPath(element.parentNode) +
-      "/" +
-      element.tagName.toLowerCase() +
-      (count > 1 ? "[" + ix + "]" : "")
-    )
+    return ""
   }
 
   function getElementByXPath(path) {
@@ -50,81 +52,153 @@ export default function def(host, userId) {
     ).singleNodeValue
   }
 
-  function addCircle(pin) {
-    const pinElement = $("<div></div>").css({
-      position: "absolute",
-      width: "28px",
-      height: "28px",
-      borderRadius: "50%",
-      backgroundColor: pin.color || "#ef4444",
-      border: "2px solid white",
-      borderBottomLeftRadius: "0px",
-      fontWeight: 600,
-      "font-size": "medium",
-      "font-family": "ui-sans-serif, system-ui",
-      color: "white",
-      textAlign: "center",
-      lineHeight: "1.75rem",
-      userSelect: "none",
-      zIndex: "1000",
-      left: pin.left,
-      top: pin.top,
-    })
+  function adjustPinDirection(pin) {
+    let pinDirection = "bl"
 
-    pinElement.on("mousedown", function (e) {
-      e.preventDefault()
+    let left = parseInt(pin.left.replace("px", ""), 10)
+    let top = parseInt(pin.top.replace("px", ""), 10)
+
+    console.log(pin.index, pin.pinDirection)
+
+    if (!pin.pinDirection) {
+      // if (["tr", "tl"].indexOf(pin.pinDirection) > -1) {
+      //   top -= 32
+      // }
+      // if (["br"].indexOf(pin.pinDirection) > -1) {
+      //   left += 32
+      // }
+      if (left + 32 > window.innerWidth) {
+        left -= 32
+        pinDirection = "br"
+        if (top - 32 < 0) {
+          top += 32
+          pinDirection = "tr"
+        }
+      } else if (top - 32 < 0) {
+        top += 32
+        pinDirection = "tl"
+      }
+      pin.pinDirection = pinDirection
+    }
+
+    pin.top = top + "px"
+    pin.left = left + "px"
+
+    return pin
+  }
+
+  function addCircle(pin) {
+    let left = parseInt(pin.left.replace("px", ""), 10)
+    let top = parseInt(pin.top.replace("px", ""), 10)
+
+    const pinElement = $("<div></div>")
+      .css({
+        position: "absolute",
+        width: "28px",
+        height: "28px",
+        borderRadius: "50%",
+        backgroundColor: pin.color || "#ef4444",
+        border: "2px solid white",
+        borderBottomLeftRadius: pin.pinDirection == "bl" ? "0px" : "50%",
+        borderTopLeftRadius: pin.pinDirection == "tl" ? "0px" : "50%",
+        borderBottomRightRadius: pin.pinDirection == "br" ? "0px" : "50%",
+        borderTopRightRadius: pin.pinDirection == "tr" ? "0px" : "50%",
+        fontWeight: 600,
+        "font-size": "medium",
+        "font-family": "ui-sans-serif, system-ui",
+        color: "white",
+        textAlign: "center",
+        lineHeight: "1.75rem",
+        userSelect: "none",
+        zIndex: "1000",
+        left: left + window.scrollX + "px",
+        top: top + window.scrollY + "px",
+      })
+      .attr("draggable", userId === pin.ownerId ? "true" : "false")
+      .attr("id", `pin-${screenMode}-${pin.index}`)
+      .attr("data-pin-index", `${pin.index}`)
+      .addClass(`m-pin m-pin-${pin.screenMode}`)
+
+    pinElement.on("dragstart", function (e) {
       if (!isCommenting && !navigationEnabled && userId === pin.ownerId) {
-        isDragging = true
+        e.stopPropagation()
         pinElementDragged = pinElement
         pinElementDragged.addClass("m-pin-dragging")
+
+        // overwrite dragged clone to position the bottom left to the cursor
+        let clone = $(this).clone()
+        clone.css({ opacity: 0.5, position: "absolute", top: 0, left: 0 })
+        $("body").append(clone)
+        e.originalEvent.dataTransfer.setDragImage(clone[0], 0, 32)
+        // setTimeout required to allow setDragImage to replace clone
+        setTimeout(() => {
+          clone.remove()
+        }, 0)
       }
     })
 
-    pinElement.addClass(`m-pin m-pin-${pin.screenMode}`)
-    pinElement.attr("id", `pin-${screenMode}-${pin.index}`)
-    pinElement.attr("data-ownerId", `${pin.ownerId}`)
-    pinElement.attr("data-xpath", `${pin.xpath}`)
-    pinElement.attr("data-left", `${pin.left}`)
-    pinElement.attr("data-top", `${pin.top}`)
-    pinElement.attr("data-window-width", `${pin.windowWidth}`)
-    pinElement.attr("data-window-height", `${pin.windowHeight}`)
+    pinElement.on("dragend", function (e) {
+      e.stopPropagation()
+      delete pinElementDragged.pinDirection
+      updatePinPosition(pinElementDragged, e)
+      if (pinElementDragged) pinElementDragged.removeClass("m-pin-dragging")
+      pinElementDragged = null
+      dragOver = null
+      isDragging = false
+      renderPins()
+    })
 
+    console.log(screenMode, pin.screenMode)
     if (screenMode != pin.screenMode) {
       pinElement.hide()
     }
+    // const target = getElementByXPath(pin.xpath)
+
     $("body").append(pinElement.text(String(pin.index)))
+    renderPins()
   }
 
   function deletePinByIndex(indexToRemove) {
-    for (let mode in pins) {
-      pins[mode] = pins[mode].filter(function (pin) {
-        console.log(pin.index, indexToRemove, mode)
-        return pin.index !== indexToRemove
-      })
-    }
+    pins = pins.filter(function (pin) {
+      return pin.index !== indexToRemove
+    })
   }
 
   function pinExists(pinIndex) {
-    for (let mode in pins) {
-      let pinExists = pins[mode].some(
-        (existingPin) => existingPin.index === pinIndex
-      )
+    return pins.some((existingPin) => existingPin.index === pinIndex)
+  }
 
-      if (pinExists) {
-        return true
-      }
+  function updateOutlinePos(event, highlight) {
+    if (!highlight) {
+      highlight = $(".m-element-highlight")
     }
-    return false
+    // move highlight to the target element
+    const targetElement = $(dragOver || event.target)
+    const rect = targetElement[0].getBoundingClientRect()
+    const scrollTop = $(document).scrollTop()
+    const scrollLeft = $(document).scrollLeft()
+    highlight.css({
+      display: "block",
+      top: `${rect.top + scrollTop}px`,
+      left: `${rect.left + scrollLeft}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+    })
   }
 
   function addOutline() {
-    const highlight = $("<div></div>")
+    highlight = $("<div></div>")
       .css({
         position: "absolute",
         outline: "1px dotted rgba(255, 0, 0, 0.5)",
         pointerEvents: "none",
       })
-      .addClass("m-element-highlight m-element hidden-s")
+      .addClass("m-element-highlight m-element")
+      .attr("id", "m-highlight")
+
+    if (navigationEnabled) {
+      highlight.addClass("hidden-s")
+    }
 
     $("body").append(highlight)
 
@@ -132,19 +206,8 @@ export default function def(host, userId) {
       if (navigationEnabled) {
         highlight.hide()
       } else {
+        updateOutlinePos(event, highlight)
         // move highlight to the target element
-        const targetElement = $(event.target)
-        const rect = targetElement[0].getBoundingClientRect()
-        const scrollTop = $(document).scrollTop()
-        const scrollLeft = $(document).scrollLeft()
-
-        highlight.css({
-          display: "block",
-          top: `${rect.top + scrollTop}px`,
-          left: `${rect.left + scrollLeft}px`,
-          width: `${rect.width}px`,
-          height: `${rect.height}px`,
-        })
       }
     })
 
@@ -156,55 +219,78 @@ export default function def(host, userId) {
     })
   }
 
-  function addPins(pins) {
-    $("m-pin").hide()
-    pins.forEach((c) => {
+  function findPin(pinIndexToFind) {
+    return pins.find((pin) => pin.index === pinIndexToFind)
+  }
+
+  function updatePinPosition(element, e) {
+    let pin = findPin(element.attr("data-pin-index"))
+
+    pin.left = e.clientX - 1 + "px"
+    pin.top = e.clientY - 32 + "px"
+    pin = adjustPinDirection(pin)
+
+    if (dragOver) {
+      pin.xpath = getXPath(dragOver)
+      pin.oldBounds = dragOver.getBoundingClientRect()
+    } else {
+      pin.xpath = getXPath(e.target)
+      pin.oldBounds = e.target.getBoundingClientRect()
+    }
+
+    element.css({
+      left: pin.left,
+      top: pin.top,
+    })
+  }
+
+  function addPins(newPins) {
+    newPins.forEach((c) => {
       clickCount =
         clickCount < parseInt(c.index, 10) ? parseInt(c.index, 10) : clickCount
-
       if (!pinExists(c)) {
-        pins[c.screenMode].push(c)
+        c = adjustPinDirection(c)
+        pins.push(c)
         addCircle(c)
       }
     })
   }
 
   function renderPins() {
-    // console.log("render pins", screenMode)
-    // $(".m-pin").hide()
+    $(".m-pin").hide()
     $(`.m-pin-${screenMode}`).each((index, element) => {
       const el = $(element)
-      const target = getElementByXPath(el.attr("data-xpath"))
-      // console.log(target, el.attr("data-xpath"), el)
+      const indexPin = el.attr("data-pin-index")
+      let pin = findPin(indexPin)
+      pin = adjustPinDirection(pin)
+      const target = getElementByXPath(pin.xpath)
       if (target) {
         const rect = target.getBoundingClientRect()
-        const windowHeight = parseInt(el.attr("data-window-height"), 10)
-        const windowWidth = parseInt(el.attr("data-window-width"), 10)
-        console.log(
-          rect.top,
-          windowHeight,
-          window.innerHeight,
-          parseInt(el.attr("data-top"), 10)
-        )
-        console.log(
-          rect.left,
-          windowWidth,
-          window.innerWidth,
-          parseInt(el.attr("data-left"), 10)
-        )
+        const oldLeft = parseInt(pin.left, 10)
+        const oldTop = parseInt(pin.top, 10)
+        const oldBounds = pin.oldBounds
+
+        const bottom = rect.bottom - oldBounds.bottom
+        const right = rect.right - oldBounds.right
+
         el.css({
-          top:
-            parseInt(el.attr("data-top"), 10) *
-            (window.innerHeight / windowHeight),
-          left:
-            parseInt(el.attr("data-left"), 10) *
-            (window.innerWidth / windowWidth),
-        }).show()
+          top: oldTop + bottom + window.scrollY,
+          left: oldLeft + right + window.scrollX,
+        })
       }
+      el.show()
     })
   }
 
+  // communicate with parent
   $(document).ready(function () {
+    addOutline()
+
+    $("*").scroll(function () {
+      renderPins()
+      // console.log("You're scrolling the page!")
+    })
+
     window.parent.postMessage(
       {
         app: "custom",
@@ -228,10 +314,11 @@ export default function def(host, userId) {
 
       if (originHost == hostHost) {
         if (event.data?.type == "addPin") {
-          const pin = event.data.pin
+          let pin = event.data.pin
+          delete pin.pinDirection
           if (!pinExists(pin)) {
-            pins[pin.screenMode].push(pin)
-            addCircle(pin)
+            pin = adjustPinDirection(pin)
+            addPins([pin])
           }
           isCommenting = false
           document.body.style.overflow = "unset"
@@ -274,14 +361,28 @@ export default function def(host, userId) {
     })
   })
 
-  // prevent a link navigation
-  $("*").on("click", function (event) {
-    // console.log("navigationEnabled", navigationEnabled)
-    if (!navigationEnabled) {
-      event.preventDefault()
-    }
-  })
+  document.addEventListener(
+    "click",
+    function (event) {
+      setTimeout(() => {
+        renderPins()
+      }, 0)
+      if (!navigationEnabled) {
+        event.preventDefault()
+      }
+    },
+    true
+  )
+  // // prevent a link navigation
+  // $("*").on("click", function (event) {
+  //   console.log("click", navigationEnabled)
+  //   if (!navigationEnabled) {
+  //     event.preventDefault()
+  //     event.stopPropagation()
+  //   }
+  // })
 
+  // add new pin
   $(document).on("mousedown", function (e) {
     if (
       !pinElementDragged &&
@@ -294,7 +395,8 @@ export default function def(host, userId) {
       document.body.style.overflow = "hidden"
 
       clickCount++
-      console.log(e.target)
+      const rect = e.target.getBoundingClientRect()
+
       window.parent.postMessage(
         {
           app: "custom",
@@ -302,19 +404,18 @@ export default function def(host, userId) {
           xPath: getXPath(e.target),
           url: window.location.href,
           pin: {
-            windowHeight: window.innerHeight,
-            windowWidth: window.innerWidth,
+            oldBounds: rect,
             parentLeft: e.originalEvent.x,
             parentTop: e.originalEvent.y,
-            left: e.pageX - 1 + "px",
-            top: e.pageY - 32 + "px",
+            left: e.clientX - 1 + "px",
+            top: e.clientY - 32 + "px",
             text: String(clickCount),
           },
           editor: {
             parentLeft: e.originalEvent.x,
             parentTop: e.originalEvent.y,
-            left: e.pageX + 40 + "px",
-            top: e.pageY - 32 + "px",
+            left: e.clientX + 40 + "px",
+            top: e.clientY - 32 + "px",
           },
           url: window.location.href,
           screenMode: screenMode,
@@ -322,43 +423,17 @@ export default function def(host, userId) {
         },
         host
       )
-
-      // clickCount++
-      // addCircle({
-      //   index: String(clickCount),
-      //   left: e.pageX - 1 + "px",
-      //   top: e.pageY - 32 + "px",
-      //   text: String(clickCount),
-      //   url: window.location.href,
-      //   screenMode: screenMode,
-      //   ownerId: userId,
-      // })
-      // addEditor({
-      //   left: e.pageX + 40 + "px",
-      //   top: e.pageY - 32 + "px",
-      // })
     }
   })
 
+  // redraw pins
   $(window).resize(function () {
-    // This code will be executed whenever the window is resized
-    // console.log("The window was resized");
     renderPins()
   })
 
-  $(document).on("mousemove", function (e) {
-    if (pinElementDragged === null) return
-    pinElementDragged.css({
-      left: e.pageX - 15 + "px",
-      top: e.pageY - 15 + "px",
-    })
+  // redraw outline
+  $(document).on("dragover", function (e) {
+    dragOver = e.target
+    updateOutlinePos(e)
   })
-
-  $(document).on("mouseup", function () {
-    if (pinElementDragged) pinElementDragged.removeClass("m-pin-dragging")
-    pinElementDragged = null
-    isDragging = false
-  })
-
-  addOutline()
 }

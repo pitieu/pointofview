@@ -48,10 +48,14 @@ export async function GET(request: NextRequest) {
     if (!subdomain) throw new Error("No subdomain given")
     const URL_REPLACE = `http://${myHost}/api/markup/`
 
+    console.log("SUBDOMAIN", myHost)
     const nextUrl = new URL(request.nextUrl.href)
     const url = replaceExtraSlashes(
+      // "http://localhost:3000" +
+      // "https://www.indiehackers.com/" +
       // "http://lifegoeson360.online/" +
-      "https://tailwindcss.com" + nextUrl.pathname.replace("/api/markup", "")
+      // "https://tailwindcss.com" +
+      myHost + nextUrl.pathname.replace("/api/markup", "")
     )
     const { hostname } = new URL(url)
 
@@ -211,7 +215,6 @@ export async function GET(request: NextRequest) {
             
           </style>
           <script type="text/javascript" async>
-          
           ${data}
           setTimeout(def("${referer.replace(/\/$/, "")}", "1"),1000)
           </script>

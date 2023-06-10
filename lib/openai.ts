@@ -13,7 +13,7 @@ import { env } from "@/env.mjs"
 const configuration = new Configuration({
   apiKey: env.OPENAI_API_KEY as string,
 })
-export const openai = new OpenAIApi(configuration)
+const openai = new OpenAIApi(configuration)
 
 export const chatCompletion = async (
   messages: CreateChatCompletionRequest["messages"]
