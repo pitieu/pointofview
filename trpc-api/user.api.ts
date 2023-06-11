@@ -9,7 +9,7 @@ export async function getSocialNetworks({ ctx }: { ctx: Context }) {
 
   const socialNetworks = await db.socialNetwork.findMany({
     where: {
-      userId: userId,
+      id: userId,
     },
     orderBy: {
       createdAt: "asc",

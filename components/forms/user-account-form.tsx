@@ -46,7 +46,6 @@ export function UserAccountForm({
     defaultValues: {
       name: user?.name || "",
       username: user?.username || "",
-      bio: user?.bio || "",
     },
   })
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
@@ -122,17 +121,6 @@ export function UserAccountForm({
               {errors?.name && (
                 <p className="px-1 text-xs text-red-600">
                   {errors.name.message}
-                </p>
-              )}
-            </div>
-            <div className="flex-rows flex items-center">
-              <Label htmlFor="bio" className="w-1/6 self-start">
-                Bio
-              </Label>
-              <Textarea id="bio" className="w-2/6" {...register("bio")} />
-              {errors?.bio && (
-                <p className="px-1 text-xs text-red-600">
-                  {errors.bio.message}
                 </p>
               )}
             </div>

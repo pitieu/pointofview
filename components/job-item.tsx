@@ -1,4 +1,5 @@
 import React, { useCallback } from "react"
+import { Job } from "@prisma/client"
 import { JobSchemaType } from "@/schema/job.schema"
 import { toCurrencyFormat } from "@/utils/number-helpers"
 import { User } from "@prisma/client"
@@ -17,7 +18,7 @@ import { Separator } from "./ui/separator"
 import { UserAvatar } from "./user-avatar"
 
 interface JobItemProps {
-  data: JobSchemaType
+  data: Job
   user: User
 }
 
