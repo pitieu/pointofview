@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
 
     if (!subdomain) throw new Error("No subdomain given")
     const URL_REPLACE = `http://${myHost}/api/markup/`
+    console.log(decodeFromBase36(subdomain), request.nextUrl.href)
 
     const nextUrl = new URL(request.nextUrl.href)
 
@@ -60,6 +61,7 @@ export async function GET(request: NextRequest) {
         subdomain
       )
     )
+    console.log("originalUrl", originalUrl)
 
     const url = replaceExtraSlashes(
       originalUrl.origin + nextUrl.pathname.replace("/api/markup", "")

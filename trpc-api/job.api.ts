@@ -171,8 +171,11 @@ export async function addCommentHandler({
     const userId = ctx.session?.user.id as string
     if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
-    const newPin = await db.commentPin.create({
+    const job = await db.jobComments.create({
       data: {
+        // Todo: maybe white list only tags we use ?
+        comment: DOMPurify.sanitize(input.comment),
+        jobId: input.jobId,
         index: input.index,
         title: input.title,
         url: input.url,
@@ -185,15 +188,6 @@ export async function addCommentHandler({
         ownerId: userId,
       },
     })
-
-    const job = await db.jobComments.create({
-      data: {
-        comment: DOMPurify.sanitize(input.comment),
-        jobId: input.jobId,
-        pinId: newPin.id,
-      },
-    })
-    console.log(job)
 
     return job
   } catch (e) {

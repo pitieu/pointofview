@@ -5,9 +5,11 @@ import { Monitor, Smartphone, Tablet } from "lucide-react"
 
 import { trpc } from "@/lib/trpc"
 import { cn } from "@/lib/utils"
+import { Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { QuillEditor } from "@/components/quill-editor"
+import { UserAvatar } from "@/components/user-avatar"
 
 interface Props {
   jobId: string
@@ -84,14 +86,14 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
       onSuccess: (result) => {
         const pinsFormatted = result.map((pinData) => {
           return {
-            index: pinData.pin.index,
-            title: pinData.pin.title,
-            xpath: pinData.pin.xpath,
-            oldBounds: JSON.parse(pinData.pin.oldBounds),
-            url: pinData.pin.url,
-            screenMode: pinData.pin.screenMode,
-            left: pinData.pin.left,
-            top: pinData.pin.top,
+            index: pinData.index,
+            title: pinData.title,
+            xpath: pinData.xpath,
+            oldBounds: pinData.oldBounds ? JSON.parse(pinData.oldBounds) : {},
+            url: pinData.url,
+            screenMode: pinData.screenMode,
+            left: pinData.left,
+            top: pinData.top,
             ownerId: userId,
           }
         })
@@ -251,7 +253,6 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
     <div className="flex h-screen flex-col">
       <div className="flex flex-row items-center gap-2 p-4">
         <div className="flex flex-row items-center">
-          {/* comments: {JSON.stringify(comments)} */}
           <Button
             variant={"ghost"}
             className={cn("px-2", {
@@ -305,6 +306,9 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
           </Button>
         </div>
       </div>
+      {/************
+       * Comments *
+       ************/}
       <div className="flex flex-grow">
         <Tabs defaultValue="comments" className="w-[500px] border-r p-4">
           <div className="flex flex-1 items-center justify-center">
@@ -318,12 +322,13 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
             Comments
             {comments.map((comment) => {
               return (
-                <div
-                  key={comment.id}
-                  dangerouslySetInnerHTML={{
-                    __html: comment.comment,
-                  }}
-                />
+                <div key={comment.id}>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: comment.comment,
+                    }}
+                  />
+                </div>
               )
             })}
           </TabsContent>

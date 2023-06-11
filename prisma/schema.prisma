@@ -157,32 +157,29 @@ enum ScreenMode {
   mobile
 }
 
-model CommentPin {
-  id           String       @id @default(cuid())
-  index        String
-  title        String?
-  url          String
-  xpath        String
-  screenMode   ScreenMode
-  oldBounds    String
-  color        String?
-  left         String
-  top          String
-  ownerId      String
-  pinDirection String?
-  
-  jobComment   JobComments? 
-}
-
 model JobComments {
   id           String       @id @default(cuid())
-  pinId        String       @unique
-  pin          CommentPin   @relation(fields: [pinId], references: [id])
-
   comment      String
+
+  // pin information
+  index        String?
+  title        String?
+  url          String?
+  xpath        String?
+  screenMode   ScreenMode?
+  oldBounds    String?
+  color        String?
+  left         String?
+  top          String?
+  pinDirection String?
+  ownerId      String
 
   createdAt    DateTime     @default(now()) @map(name: "created_at")
   updatedAt    DateTime     @default(now()) @map(name: "updated_at")
   jobId        String
   job          Job          @relation(fields: [jobId], references: [id])
+
+  parentId     String?      // new field for self-referencing relationship
+  parent       JobComments? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies      JobComments[] @relation("CommentReplies")
 }
