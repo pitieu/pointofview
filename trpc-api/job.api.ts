@@ -152,9 +152,6 @@ export async function fetchCommentsHandler({
     where: {
       jobId: input.id,
     },
-    include: {
-      pin: true,
-    },
   })
 
   return job
