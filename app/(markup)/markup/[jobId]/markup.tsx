@@ -189,7 +189,7 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
         refetch()
       }
     })
-  }, [mode, editMode, newUrl, userId])
+  }, [mode, editMode, newUrl, userId, refetch])
 
   const sendMsgIframe = (msg: any) => {
     let iframeWindow = iframeRef?.current?.contentWindow

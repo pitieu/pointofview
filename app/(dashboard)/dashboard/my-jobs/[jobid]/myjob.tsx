@@ -27,22 +27,22 @@ const Myjob: FC<MyjobProps> = ({ jobid }) => {
     <div className="flex flex-row gap-2">
       <div className="flex w-4/12 flex-col bg-yellow-700">
         <div className="flex flex-row gap-4">
-          {job?.urls.map((urlData) => (
-            <div className="flex flex-col gap-4">
-              {urlData.thumbnail && (
-                <Link target="_blank" href={urlData.image || "#"}>
-                  <Image
-                    src={urlData.thumbnail}
-                    alt="website preview"
-                    className="rounded-lg"
-                    width={200}
-                    height={200}
-                  />
-                </Link>
-              )}
-              <div>{urlData.url}</div>
-            </div>
-          ))}
+
+          <div className="flex flex-col gap-4">
+            {job?.thumbnail && (
+              <Link target="_blank" href={job?.image || "#"}>
+                <Image
+                  src={job?.thumbnail}
+                  alt="website preview"
+                  className="rounded-lg"
+                  width={200}
+                  height={200}
+                />
+              </Link>
+            )}
+            <div>{job?.url}</div>
+          </div>
+
         </div>
       </div>
       <div className="w-6/12 bg-green-700">MidContent</div>
