@@ -33,7 +33,7 @@ import {
 } from "../ui/card"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card"
 
-interface AddJobFormProps extends React.HTMLAttributes<HTMLFormElement> {}
+interface AddJobFormProps extends React.HTMLAttributes<HTMLFormElement> { }
 
 export function AddJobForm({ className, ...props }: AddJobFormProps) {
   const { toast } = useToast()
@@ -48,7 +48,7 @@ export function AddJobForm({ className, ...props }: AddJobFormProps) {
         title: "Failed to create Job. Try again later.",
       })
     },
-    onSettled: async () => {},
+    onSettled: async () => { },
   })
 
   const form = useForm({
@@ -165,7 +165,7 @@ export function AddJobForm({ className, ...props }: AddJobFormProps) {
                           <p className="mt-2 text-sm text-muted-foreground">
                             If someone accepts this job and it has an offer
                             greater than 0$. They will have a 48h deadline, you
-                            can ask for a refund if they didn't give you the
+                            can ask for a refund if they didn&apos;t give you the
                             review by that time.
                           </p>
                         </HoverCardContent>

@@ -8,7 +8,7 @@ import { ButtonProps, buttonVariants } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/icons"
 
-interface PostCreateButtonProps extends ButtonProps {}
+interface PostCreateButtonProps extends ButtonProps { }
 
 export function PostCreateButton({
   className,
@@ -46,13 +46,9 @@ export function PostCreateButton({
     router.push(`/editor/${post.id}`)
   }
 
-  const openModal = React.useCallback(() => {
-    onClick()
-  }, [])
-
   return (
     <button
-      onClick={openModal}
+      onClick={() => onClick()}
       className={cn(
         buttonVariants({ variant }),
         {

@@ -80,4 +80,6 @@ const QuillEditor = React.forwardRef(
   }
 )
 
+QuillEditor.displayName = "QuillEditor"
+
 export { QuillEditor }

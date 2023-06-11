@@ -49,7 +49,7 @@ export default async function IndexPage() {
 
         {/*  */}
         <div className="mx-auto flex items-center justify-between align-middle md:max-w-[64rem] ">
-          <div className="relative min-h-[size] flex-grow overflow-hidden rounded-lg border bg-background p-2">
+          <div className="relative min-h-[size] grow overflow-hidden rounded-lg border bg-background p-2">
             <div className="flex flex-col justify-between space-y-4 rounded-md p-6">
               <Coffee size={48} className="mx-auto mb-2 text-sky-500" />
               <h3 className="text-center font-bold">1. Request Feedback</h3>
@@ -59,7 +59,7 @@ export default async function IndexPage() {
             </div>
           </div>
           <ArrowRight color="gray" size={48} className="mx-4" />
-          <div className="relative min-h-[size] flex-grow overflow-hidden rounded-lg border bg-background p-2">
+          <div className="relative min-h-[size] grow overflow-hidden rounded-lg border bg-background p-2">
             <div className="flex flex-col justify-between space-y-4 rounded-md p-6">
               <Clock size={48} className="mx-auto mb-2 text-rose-500" />
               <h3 className="text-center font-bold">2. Wait</h3>
@@ -69,7 +69,7 @@ export default async function IndexPage() {
             </div>
           </div>
           <ArrowRight color="gray" size={48} className="mx-4" />
-          <div className="relative min-h-[size] max-w-[300px] flex-grow overflow-hidden rounded-lg border bg-background p-2">
+          <div className="relative min-h-[size] max-w-[300px] grow overflow-hidden rounded-lg border bg-background p-2">
             <div className="flex flex-col justify-between space-y-4 rounded-md p-6">
               <CheckCircle size={48} className="mx-auto mb-2 text-green-500" />
               <h3 className="text-center font-bold">3. Complete</h3>
