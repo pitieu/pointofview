@@ -69,7 +69,7 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
       onSuccess: (data) => {
         if (data) {
           const base = encodeToBase36(data.url)
-          setNewUrl(`http://${base}.p.${host}`)
+          setNewUrl(`http://${jobId}.p.${host}`)
         }
       },
     }
@@ -189,7 +189,7 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
         refetch()
       }
     })
-  }, [mode, editMode, newUrl])
+  }, [mode, editMode, newUrl, userId])
 
   const sendMsgIframe = (msg: any) => {
     let iframeWindow = iframeRef?.current?.contentWindow
@@ -309,7 +309,7 @@ const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
       {/************
        * Comments *
        ************/}
-      <div className="flex flex-grow">
+      <div className="flex grow">
         <Tabs defaultValue="comments" className="w-[500px] border-r p-4">
           <div className="flex flex-1 items-center justify-center">
             <TabsList className="">
