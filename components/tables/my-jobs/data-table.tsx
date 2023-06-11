@@ -24,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Icons } from "@/components/icons"
 
 import { DataTablePagination } from "../data-table-pagination"
 import { DataTableToggleFilter } from "../data-table-toggle-filter"

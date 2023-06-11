@@ -3,11 +3,9 @@
 import { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { JobSchemaType } from "@/schema/job.schema"
 import { toCurrencyFormat } from "@/utils/number-helpers"
-import { JobUrl } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowDownAZ, ArrowUpAZ, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import moment from "moment"
 
 import { trpc } from "@/lib/trpc"
@@ -30,23 +28,20 @@ export type tableColumns = {
   published: boolean
   createdAt: Date
   jobs?: number
-  urls: JobUrl[]
+  url: string
+  image: string
+  thumbnail: string
 }
 
 export const columns: ColumnDef<tableColumns>[] = [
   {
-    accessorKey: "urls",
+    accessorKey: "thumbnail",
     header: "",
     cell: ({ row }) => {
-      if (!row.original.urls.length) return null
-      if (!row.original.urls[0].image) return null
       return (
         <Suspense>
           <Image
-            src={
-              row.original.urls[0].thumbnail ||
-              "/images/placeholder_200x200.jpg"
-            }
+            src={row.original.thumbnail || "/images/placeholder_200x200.jpg"}
             width={200}
             height={200}
             alt="website thumbnail"
@@ -66,10 +61,11 @@ export const columns: ColumnDef<tableColumns>[] = [
         <div className="flex flex-col items-start gap-2">
           <Link
             href={`markup/${row.original.id}`}
-            className="text-blue-600 hover:underline"
+            className="text-lg text-blue-600 hover:underline"
           >
             {row.original.title}
           </Link>
+          <div className="text-sm text-foreground">{row.original.url}</div>
         </div>
       )
     },

@@ -3956,6 +3956,11 @@ domhandler@^5.0.2, domhandler@^5.0.3:
   dependencies:
     domelementtype "^2.3.0"
 
+dompurify@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/dompurify/-/dompurify-3.0.3.tgz"
+  integrity sha512-axQ9zieHLnAnHh0sfAamKYiqXMJAVwu+LM/alQ7WDagoWessyWvMSFyW65CqF3owufNu8HBcE4cM2Vflu7YWcQ==
+
 domutils@^3.0.1:
   version "3.1.0"
   resolved "https://registry.npmjs.org/domutils/-/domutils-3.1.0.tgz"

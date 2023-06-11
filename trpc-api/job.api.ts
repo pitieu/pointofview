@@ -4,8 +4,9 @@ import {
   FetchMyJobType,
   JobSchemaType,
 } from "@/schema/job.schema"
+import { fixURL } from "@/utils/string"
 import { TRPCError } from "@trpc/server"
-import lodash from "lodash"
+import DOMPurify from "dompurify"
 
 import { env } from "@/env.mjs"
 import { db } from "@/lib/db"
@@ -27,36 +28,20 @@ export async function createJobHandler({
 }) {
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
-  let urls: UrlData[] = []
 
-  if (env.SCREENSHOT_ENABLED == "false") {
-    urls = input.urls.map((el) => {
-      return {
-        url: el.url,
-        image:
-          "09a8b930c8b79e7c313e5e741e1d59c39ae91bc1f10cdefa68b47bf77519be57.gif",
-        thumbnail:
-          "09a8b930c8b79e7c313e5e741e1d59c39ae91bc1f10cdefa68b47bf77519be57_tiny.gif",
-      }
-    })
-  } else {
-    // Todo: move this to a queue system
-    for (const webUrl in input.urls) {
-      try {
-        const { url, thumbnail } = await createThumbnailFromUrl(
-          "https://" + input?.urls[webUrl].url
-        )
-        urls.push({
-          image: url,
-          thumbnail: thumbnail,
-          url: "https://" + input.urls[webUrl].url,
-        })
-      } catch (e) {
-        console.log(e)
-        console.log("failed url ", input.urls[webUrl].url)
-        urls.push({ image: "", thumbnail: "", url: input.urls[webUrl].url })
-      }
+  let url: UrlData = { image: "", thumbnail: "", url: fixURL(input.url) }
+
+  // Todo: move this to a queue system
+  try {
+    const result = await createThumbnailFromUrl(url.url)
+    url = {
+      image: result.url,
+      thumbnail: result.thumbnail,
+      url: url.url,
     }
+  } catch (e) {
+    console.log(e)
+    console.log("failed url ", url.url)
   }
 
   // Todo: if it's publish call notifications?
@@ -65,16 +50,11 @@ export async function createJobHandler({
       title: input.title,
       published: input.published,
       budget: input.budget,
-      deadline: (input.deadline && input.deadline[0]) || 0,
+      deadline: 2,
       description: input.description,
-      urls: {
-        create: urls,
-      },
-      credentials: {
-        create: input.credentials?.map((el) => {
-          return lodash.pick(el, ["label", "username", "password"])
-        }),
-      },
+      url: url.url,
+      thumbnail: url.thumbnail,
+      image: url.image,
       userId: userId,
     },
   })
@@ -92,8 +72,6 @@ export async function listMyJobHandler({
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
 
-  console.log("input", input)
-
   let where = {
     userId: userId,
   }
@@ -104,10 +82,6 @@ export async function listMyJobHandler({
 
   const jobs = await db.job.findMany({
     where: where,
-    include: {
-      urls: true,
-      credentials: true,
-    },
   })
 
   return jobs
@@ -126,10 +100,6 @@ export async function fetchMyJobHandler({
   const job = await db.job.findUnique({
     where: {
       id: input.id,
-    },
-    include: {
-      urls: true,
-      credentials: true,
     },
   })
 
@@ -154,16 +124,6 @@ export async function deleteMyJobHandler({
   try {
     // Begin a transaction
     await db.$transaction([
-      db.jobUrl.deleteMany({
-        where: {
-          jobId: input.id,
-        },
-      }),
-      db.jobCredentials.deleteMany({
-        where: {
-          jobId: input.id,
-        },
-      }),
       db.job.deleteMany({
         where: {
           id: input.id,
@@ -188,19 +148,16 @@ export async function fetchCommentsHandler({
 }) {
   const userId = ctx.session?.user.id as string
   if (!userId) throw new TRPCError({ code: "BAD_REQUEST" })
-  console.log(input.id)
-  const job = await db.job.findUnique({
+  const job = await db.jobComments.findMany({
     where: {
       jobId: input.id,
     },
     include: {
-      // urls: true,
-      // credentials: true,
-      comments: true,
+      pin: true,
     },
   })
 
-  return job ? job : []
+  return job
 }
 
 export async function addCommentHandler({
@@ -231,7 +188,7 @@ export async function addCommentHandler({
 
     const job = await db.jobComments.create({
       data: {
-        comment: input.comment,
+        comment: DOMPurify.sanitize(input.comment),
         jobId: input.jobId,
         pinId: newPin.id,
       },

@@ -58,8 +58,6 @@ export default function def(host, userId) {
     let left = parseInt(pin.left.replace("px", ""), 10)
     let top = parseInt(pin.top.replace("px", ""), 10)
 
-    console.log(pin.index, pin.pinDirection)
-
     if (!pin.pinDirection) {
       // if (["tr", "tl"].indexOf(pin.pinDirection) > -1) {
       //   top -= 32
@@ -148,7 +146,6 @@ export default function def(host, userId) {
       renderPins()
     })
 
-    console.log(screenMode, pin.screenMode)
     if (screenMode != pin.screenMode) {
       pinElement.hide()
     }
@@ -248,6 +245,7 @@ export default function def(host, userId) {
     newPins.forEach((c) => {
       clickCount =
         clickCount < parseInt(c.index, 10) ? parseInt(c.index, 10) : clickCount
+
       if (!pinExists(c)) {
         c = adjustPinDirection(c)
         pins.push(c)
@@ -337,11 +335,14 @@ export default function def(host, userId) {
 
         if (event.data?.type == "data") {
           screenMode = event.data?.screenMode
+        }
 
-          // add pins give from frontend
-          if (event.data?.hasOwnProperty("pins")) {
-            addPins(event.data.pins)
-          }
+        if (event.data?.type == "addPins") {
+          console.log("received add Pins", event.data.pins)
+          if (event.data?.screenMode) screenMode = event.data?.screenMode
+          addPins(event.data.pins)
+          isCommenting = false
+          document.body.style.overflow = "unset"
         }
 
         if (event.data?.hasOwnProperty("navigationEnabled")) {

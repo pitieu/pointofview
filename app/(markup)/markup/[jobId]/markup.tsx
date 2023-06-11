@@ -10,8 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { QuillEditor } from "@/components/quill-editor"
 
 interface Props {
-  id: string
-  host: string
+  jobId: string
   userId: string | null
 }
 
@@ -20,7 +19,7 @@ type EditMode = "comment" | "browse"
 
 interface Pin {
   index: string
-  title?: string
+  title?: string | null
   url: string
   xpath: string
   screenMode: ScreenMode
@@ -28,16 +27,28 @@ interface Pin {
   color?: string
   left: string
   top: string
-  parentLeft: string
-  parentTop: string
-  ownerId: string
+  parentLeft?: string
+  parentTop?: string
+  ownerId?: string | null
   pinDirection?: string
 }
+function encodeToBase36(input: string) {
+  let buffer = Buffer.from(input)
+  return buffer.toString("hex")
+}
 
-const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
+function decodeFromBase36(input: string) {
+  let buffer = Buffer.from(input, "hex")
+  return buffer.toString()
+}
+
+const CommentSidebar: React.FC<Props> = ({ jobId, userId }: Props) => {
+  const host = window.location.host
+
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [mode, setMode] = useState<ScreenMode>("desktop")
   const [editMode, setEditMode] = useState<EditMode>("comment")
+  const [newUrl, setNewUrl] = useState("")
   const [editorPosition, setEditorPosition] = useState({
     top: "0px",
     left: "-1000px",
@@ -46,18 +57,52 @@ const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
   })
   const [pins, setPins] = useState<Pin[]>([])
   const [isEditing, setIsEditing] = useState(true)
-  const url = `http://${id}.p.${host}`
 
-  // const {
-  //   data: comments = [],
-  //   isLoading,
-  //   refetch,
-  // } = trpc.job.comments.list.useQuery(
-  //   {
-  //     jobId: id,
-  //   },
-  //   { trpc: { abortOnUnmount: true } }
-  // )
+  const { data: job, isLoading } = trpc.job.myJob.fetch.useQuery(
+    {
+      id: jobId,
+    },
+    {
+      trpc: { abortOnUnmount: true },
+      onSuccess: (data) => {
+        if (data) {
+          const base = encodeToBase36(data.url)
+          setNewUrl(`http://${base}.p.${host}`)
+        }
+      },
+    }
+  )
+
+  const { data: comments = [], refetch } = trpc.job.comments.list.useQuery(
+    {
+      id: jobId,
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: false, // disable this query from automatically running
+      trpc: { abortOnUnmount: true },
+      onSuccess: (result) => {
+        const pinsFormatted = result.map((pinData) => {
+          return {
+            index: pinData.pin.index,
+            title: pinData.pin.title,
+            xpath: pinData.pin.xpath,
+            oldBounds: JSON.parse(pinData.pin.oldBounds),
+            url: pinData.pin.url,
+            screenMode: pinData.pin.screenMode,
+            left: pinData.pin.left,
+            top: pinData.pin.top,
+            ownerId: userId,
+          }
+        })
+        sendMsgIframe({
+          type: "addPins",
+          pins: pinsFormatted,
+          screenMode: mode,
+        })
+      },
+    }
+  )
 
   const addComment = trpc.job.comments.add.useMutation({
     onSuccess: () => {
@@ -76,7 +121,7 @@ const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
   useEffect(() => {
     window.addEventListener("message", function (event) {
       // check if it's coming from same host
-      if (event.origin !== url || !event.data?.type) return
+      if (event.origin !== newUrl || !event.data?.type) return
 
       if (event.data.type === "add_pin") {
         const rect = iframeRef?.current?.getBoundingClientRect()
@@ -139,26 +184,17 @@ const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
       }
       // console.log("Received message:", event.data)
       if (event.data.type === "url_changed") {
-        sendMsgIframe({
-          type: "data",
-          screenMode: mode,
-          editMode: editMode,
-          user: {
-            id: userId,
-          },
-          pins: pins,
-          navigationEnabled: editMode === "browse",
-        })
+        refetch()
       }
     })
-  }, [mode, editMode])
+  }, [mode, editMode, newUrl])
 
   const sendMsgIframe = (msg: any) => {
     let iframeWindow = iframeRef?.current?.contentWindow
     if (!iframeWindow) return false
     msg.app = "custom"
     console.log("sending", msg)
-    iframeWindow.postMessage(msg, url)
+    iframeWindow.postMessage(msg, newUrl)
     return true
   }
 
@@ -198,9 +234,9 @@ const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
 
     addComment.mutate({
       comment: text,
-      jobId: id,
+      jobId: jobId,
       index: pin.index,
-      title: pin.title,
+      title: pin.title || undefined,
       url: pin.url,
       xpath: pin.xpath,
       screenMode: pin.screenMode,
@@ -270,7 +306,7 @@ const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
         </div>
       </div>
       <div className="flex flex-grow">
-        <Tabs defaultValue="Comments" className="w-[500px] border-r p-4">
+        <Tabs defaultValue="comments" className="w-[500px] border-r p-4">
           <div className="flex flex-1 items-center justify-center">
             <TabsList className="">
               <TabsTrigger value="comments">Comments</TabsTrigger>
@@ -278,7 +314,19 @@ const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
               <TabsTrigger value="info">Info</TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value="comments">Comments</TabsContent>
+          <TabsContent value="comments">
+            Comments
+            {comments.map((comment) => {
+              return (
+                <div
+                  key={comment.id}
+                  dangerouslySetInnerHTML={{
+                    __html: comment.comment,
+                  }}
+                />
+              )
+            })}
+          </TabsContent>
           <TabsContent value="tasks">Tasks</TabsContent>
           <TabsContent value="info">Info</TabsContent>
         </Tabs>
@@ -300,16 +348,18 @@ const CommentSidebar: React.FC<Props> = ({ id, host, userId }: Props) => {
                   mode === "tablet" || mode === "mobile",
               })}
             >
-              <iframe
-                ref={iframeRef}
-                sandbox="allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox"
-                src={`${url}/api/markup`}
-                className={cn({
-                  "h-full w-full": mode === "desktop",
-                  "h-[768px] w-[576px]": mode === "tablet",
-                  "h-[667px] w-[375px]": mode === "mobile",
-                })}
-              ></iframe>
+              {job && !isLoading && (
+                <iframe
+                  ref={iframeRef}
+                  sandbox="allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox"
+                  src={`${newUrl}/api/markup`}
+                  className={cn({
+                    "h-full w-full": mode === "desktop",
+                    "h-[768px] w-[576px]": mode === "tablet",
+                    "h-[667px] w-[375px]": mode === "mobile",
+                  })}
+                ></iframe>
+              )}
             </div>
           </div>
         </div>

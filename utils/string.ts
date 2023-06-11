@@ -89,3 +89,29 @@ export const urlPattern = new RegExp(
     "(\\#[-a-z\\d_]*)?$",
   "i" // fragment locator
 )
+
+export function fixURL(url: string): string {
+  // Check if the URL starts with a valid scheme (http:// or https://)
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    // Prepend 'https://' to the URL if it doesn't have a scheme
+    url = "https://" + url
+  }
+
+  try {
+    const fixedURL = new URL(url)
+    return fixedURL.href
+  } catch (error) {
+    // If the URL is still invalid after fixing the scheme, return an empty string or handle the error as desired
+    return ""
+  }
+}
+
+export function decodeFromBase36(input: string) {
+  let buffer = Buffer.from(input, "hex")
+  return buffer.toString()
+}
+
+export function encodeToBase36(input: string) {
+  let buffer = Buffer.from(input)
+  return buffer.toString("hex")
+}

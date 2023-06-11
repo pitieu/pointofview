@@ -10,22 +10,11 @@ const CustomUrl = z.string().refine((value) => urlPattern.test(value), {
 export const jobSchema = z.object({
   title: z.string().min(3, "Title should have at least 3 characters"),
   budget: z.number().min(0).default(0).optional(),
-  deadline: z.array(z.number().min(0).max(30)).optional(),
   published: z.boolean().default(false).optional(),
   description: z
     .string()
     .min(20, "Write a small description of what you want to achieve."),
   url: CustomUrl,
-  credentials: z
-    .array(
-      z.object({
-        id: z.string().optional(),
-        label: z.string().optional().default("No Label"),
-        username: z.string(),
-        password: z.string().optional(),
-      })
-    )
-    .optional(),
 })
 
 export type FetchMyJobType = TypeOf<typeof fetchMyJobSchema>
