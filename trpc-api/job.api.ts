@@ -31,7 +31,7 @@ export async function createJobHandler({
 
   let url: UrlData = { image: "", thumbnail: "", url: fixURL(input.url) }
 
-  // Todo: move this to a queue system
+  // Todo: move this to a queue system and images to external s3 bucket maybe
   try {
     const result = await createThumbnailFromUrl(url.url)
     url = {
