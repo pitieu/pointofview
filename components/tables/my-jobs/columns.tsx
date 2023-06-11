@@ -29,8 +29,8 @@ export type tableColumns = {
   createdAt: Date
   jobs?: number
   url: string
-  image: string
-  thumbnail: string
+  image?: string | null
+  thumbnail?: string | null
 }
 
 export const columns: ColumnDef<tableColumns>[] = [

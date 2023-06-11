@@ -1,14 +1,15 @@
-# Nextjs 13 + Prisma
+# Roast community
 
 ## About this project
-Saas idea i'm working on for a community of people who want to review websites.
+
+Saas idea i'm working on, for a community of people who want to review websites.
 
 ## Running Locally
 
-1. Install dependencies using pnpm:
+1. Install dependencies using npm:
 
 ```sh
-pnpm install
+npm install
 ```
 
 2. Copy `.env.example` to `.env.local` and update the variables.
@@ -20,9 +21,9 @@ cp .env.example .env.local
 3. Start the development server:
 
 ```sh
-pnpm dev
+npm run dev
 ```
 
 ## License
 
-Licensed under the [MIT license](https://github.com/shadcn/taxonomy/blob/main/LICENSE.md).
+Licensed under the [MIT license]
