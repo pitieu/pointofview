@@ -12,6 +12,40 @@ const __dirname = path.resolve()
 
 const imageFolder = "public/images/uploads/"
 
+export const screenshotLocalUrl = async (url: string): Promise<string> => {
+  try {
+    const validUrl = new URL(url)
+    const response = await axios.get(
+      `http://localhost:4000/screenshot?url=${validUrl.href}`
+    )
+    let imageBase64: string
+    if (response.data) {
+      imageBase64 = response.data.image
+    } else {
+      throw new Error("failed to get screenshot")
+    }
+    return imageBase64
+  } catch (e) {
+    throw e
+  }
+}
+export const screenshotOneUrl = async (url: string): Promise<string> => {
+  const client = new screenshotone.Client(
+    env.SCREENSHOT_API,
+    env.SCREENSHOT_SECRET
+  )
+  const options = screenshotone.AnimateOptions.url(url)
+    .scriptsWaitUntil("networkidle0")
+    .format("gif")
+    .scrollStartImmediately(true)
+    .scenario("scroll")
+
+  const imageBlob = await client.animate(options)
+
+  const buffer = Buffer.from(await imageBlob.arrayBuffer())
+  return buffer.toString("base64")
+}
+
 export const createThumbnailFromUrl = async (
   url: string
 ): Promise<{ url: string; thumbnail: string; image: string }> => {
@@ -50,7 +84,10 @@ export const createThumbnailFromUrl = async (
   }
 
   console.log("ScreenshotOne Screenshot")
-  const client = new screenshotone.Client("o9jA46FYyqA0KA", "ZaquH2rk00QyHQ")
+  const client = new screenshotone.Client(
+    env.SCREENSHOT_API,
+    env.SCREENSHOT_SECRET
+  )
 
   const options = screenshotone.AnimateOptions.url(url)
     .scriptsWaitUntil("networkidle0")
@@ -91,6 +128,30 @@ export const createThumbnail = async (
 
   fs.writeFileSync(outputPath, resizedBuffer)
   return Promise.resolve()
+}
+
+export const resizeImageFromUrl = async (
+  imageURL: string,
+  resizeWidth: number = 200,
+  resizeHeight: number = resizeWidth
+) => {
+  const response = await axios({
+    url: imageURL,
+    method: "GET",
+    responseType: "arraybuffer",
+  })
+  if (!response.headers["content-type"].startsWith("image")) {
+    throw new Error("URL does not point to an image")
+  }
+
+  const inputBuffer = Buffer.from(response.data, "binary")
+  const outputBuffer = await sharp(inputBuffer)
+    .resize(resizeWidth, resizeHeight, {
+      fit: "cover",
+      position: "top",
+    })
+    .toBuffer()
+  return outputBuffer.toString("base64")
 }
 
 export const resizeImage = async (

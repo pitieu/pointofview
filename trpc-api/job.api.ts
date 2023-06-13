@@ -32,17 +32,17 @@ export async function createJobHandler({
   let url: UrlData = { image: "", thumbnail: "", url: fixURL(input.url) }
 
   // Todo: move this to a queue system and images to external s3 bucket maybe
-  try {
-    const result = await createThumbnailFromUrl(url.url)
-    url = {
-      image: result.url,
-      thumbnail: result.thumbnail,
-      url: url.url,
-    }
-  } catch (e) {
-    console.log(e)
-    console.log("failed url ", url.url)
-  }
+  // try {
+  //   const result = await createThumbnailFromUrl(url.url)
+  //   url = {
+  //     image: result.url,
+  //     thumbnail: result.thumbnail,
+  //     url: url.url,
+  //   }
+  // } catch (e) {
+  //   console.log(e)
+  //   console.log("failed url ", url.url)
+  // }
 
   // Todo: if it's publish call notifications?
   const job = await db.job.create({
@@ -53,8 +53,10 @@ export async function createJobHandler({
       deadline: 2,
       description: input.description,
       url: url.url,
-      thumbnail: url.thumbnail,
-      image: url.image,
+      thumbnail: "", // worker should populate this eventually
+      image: "", // worker should populate this eventually
+      // thumbnail: url.thumbnail,
+      // image: url.image,
       userId: userId,
     },
   })

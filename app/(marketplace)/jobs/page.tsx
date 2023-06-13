@@ -1,8 +1,6 @@
 import Link from "next/link"
 
-import { dashboardConfig } from "@/config/dashboard"
 import { Button } from "@/components/ui/button"
-import { DashboardNav } from "@/components/navigation/nav"
 
 export default async function JobsPage() {
   return (

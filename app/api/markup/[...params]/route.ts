@@ -39,6 +39,26 @@ const replaceExtraSlashes = (url: string): string => {
   return url.replace(/(https?:\/\/)|(\/)+/g, (match, p1) => p1 ?? "/")
 }
 
+async function getCachedUrl(subdomain: string) {
+  let cachedUrl = await kv.get(subdomain)
+  if (!cachedUrl) {
+    const result = await db.job.findUnique({
+      where: {
+        id: subdomain,
+      },
+    })
+
+    if (result) {
+      const newUrl = new URL(result.url)
+      cachedUrl = newUrl.origin
+      await kv.set(subdomain, cachedUrl)
+    } else {
+      throw new Error(`Could not find id:${subdomain}`)
+    }
+  }
+  return cachedUrl as string
+}
+
 export async function GET(request: NextRequest) {
   try {
     const headersList = headers()
@@ -51,23 +71,9 @@ export async function GET(request: NextRequest) {
 
     if (!subdomain) throw new Error("No subdomain given")
     const URL_REPLACE = `http://${myHost}/api/markup/`
-    // console.log(decodeFromBase36(subdomain), request.nextUrl.href)
 
     const nextUrl = new URL(request.nextUrl.href)
-    const cachedUrl = await kv.get("key")
-
-    if (!cachedUrl) {
-      const result = await db.job.findUnique({
-        where: {
-          id: subdomain,
-        },
-      })
-      if (result) {
-        await kv.set(subdomain, result)
-      } else {
-        throw new Error(`Could not find id:${subdomain}`)
-      }
-    }
+    let cachedUrl: string = await getCachedUrl(subdomain)
 
     const originalUrl = new URL(
       decodeFromBase36(
@@ -75,7 +81,7 @@ export async function GET(request: NextRequest) {
         // "https://www.indiehackers.com/" +
         // "http://lifegoeson360.online/" +
         // "https://tailwindcss.com" +
-        subdomain
+        cachedUrl!
       )
     )
     console.log("originalUrl", originalUrl)

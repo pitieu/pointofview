@@ -42,7 +42,6 @@ const Myjob: FC<MyjobProps> = ({ jobid }) => {
             )}
             <div>{job?.url}</div>
           </div>
-
         </div>
       </div>
       <div className="w-6/12 bg-green-700">MidContent</div>

@@ -6,13 +6,13 @@ import LoginOrUserAccount from "@/components/loginOrUserAccount"
 import { MainNav } from "@/components/navigation/main-nav"
 import { DashboardNav } from "@/components/navigation/nav"
 
-interface DashboardLayoutProps {
+interface MarketplaceLayoutProps {
   children?: React.ReactNode
 }
 
-export default async function DashboardLayout({
+export default async function MarketplaceLayout({
   children,
-}: DashboardLayoutProps) {
+}: MarketplaceLayoutProps) {
   const user = await getCurrentUser()
 
   if (!user) {
