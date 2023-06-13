@@ -1,22 +1,22 @@
 import { PrismaClient } from "@prisma/client"
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-      cachedPrisma: PrismaClient
-    }
-  }
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
 }
 
 let prisma: PrismaClient
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient()
 } else {
-  if (!global.cachedPrisma) {
-    console.log("New PrismaClient connection")
-    global.cachedPrisma = new PrismaClient()
+  console.log(
+    "New PrismaClient connection is cached?",
+    !!globalForPrisma.prisma
+  )
+  if (!globalForPrisma.prisma) {
+    prisma = new PrismaClient()
+  } else {
+    prisma = globalForPrisma.prisma
   }
-  prisma = global.cachedPrisma
 }
 
 export const db = prisma

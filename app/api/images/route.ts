@@ -1,11 +1,6 @@
 import { NextRequest } from "next/server"
-import { createClient } from "@supabase/supabase-js"
 
-import { env } from "@/env.mjs"
-
-const supabaseUrl = "https://wponzzunhfwetffursiz.supabase.co"
-const supabaseKey = env.SUPABASE_API_KEY || ""
-const supabase = createClient(supabaseUrl, supabaseKey)
+import { supabase } from "@/lib/supabase"
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()

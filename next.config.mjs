@@ -1,6 +1,9 @@
+import * as dotenv from "dotenv"
 import { withContentlayer } from "next-contentlayer"
 
 import "./env.mjs"
+
+dotenv.config()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -22,37 +25,40 @@ const nextConfig = {
     return [
       // Rewrite rule for subdomains
       {
-        source: '/:path*',
-        destination: '/api/markup/:path*',
+        source: "/:path*",
+        destination: "/api/markup/:path*",
         has: [
           {
-            type: 'host',
-            value: '(.*).p.localhost',
+            type: "host",
+            value: `(.*).p.${new URL(process.env.NEXT_PUBLIC_APP_URL).host}`,
           },
         ],
       },
       {
-        source: '/',
-        destination: '/api/markup/',
+        source: "/",
+        destination: "/api/markup/",
         has: [
           {
-            type: 'host',
-            value: '(.*).p.localhost',
+            type: "host",
+            value: `(.*).p.${new URL(process.env.NEXT_PUBLIC_APP_URL).host}`,
           },
         ],
       },
-    ];
+    ]
   },
-  reactStrictMode: true,
+  // reactStrictMode: true,
   images: {
-    domains: ["avatars.githubusercontent.com"],
+    domains: [
+      "avatars.githubusercontent.com",
+      new URL(process.env.SUPABASE_URL).hostname,
+    ],
   },
   experimental: {
     serverActions: true,
-    serverComponentsExternalPackages: ["@prisma/client"],
+    // serverComponentsExternalPackages: ["@prisma/client"],
     esmExternals: false,
   },
-  swcMinify: true,
+  // swcMinify: true,
 }
 
 export default withContentlayer(nextConfig)

@@ -40,13 +40,13 @@ var axios_1 = require("axios");
 var dotenv = require("dotenv");
 var db_1 = require("../lib/db");
 dotenv.config();
-function startWorker() {
+function verifyImage() {
     return __awaiter(this, void 0, void 0, function () {
-        var jobs, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var jobs, _a, _b, _c, _i, job, result, error_1, error_2;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
+                    _d.trys.push([0, 8, , 9]);
                     return [4 /*yield*/, db_1.db.job.findMany({
                             where: {
                                 image: { equals: "" },
@@ -54,25 +54,107 @@ function startWorker() {
                             take: 50,
                         })];
                 case 1:
-                    jobs = _a.sent();
-                    jobs.forEach(function (job) {
-                        axios_1.default.get("".concat(process.env.QSTASH_URL, "URL_SCREENSHOT"), {
-                            headers: {
-                                Authorization: "Bearer ".concat(process.env.QSTASH_TOKEN),
-                            },
-                        });
-                    });
-                    return [3 /*break*/, 3];
+                    jobs = _d.sent();
+                    console.log(jobs);
+                    _a = jobs;
+                    _b = [];
+                    for (_c in _a)
+                        _b.push(_c);
+                    _i = 0;
+                    _d.label = 2;
                 case 2:
-                    error_1 = _a.sent();
-                    console.error("Error processing message", error_1);
-                    return [3 /*break*/, 3];
+                    if (!(_i < _b.length)) return [3 /*break*/, 7];
+                    _c = _b[_i];
+                    if (!(_c in _a)) return [3 /*break*/, 6];
+                    job = _c;
+                    _d.label = 3;
                 case 3:
+                    _d.trys.push([3, 5, , 6]);
+                    return [4 /*yield*/, axios_1.default.post("".concat(process.env.NEXT_PUBLIC_APP_URL, "/api/images/url"), {
+                            jobId: jobs[job].id,
+                            url: jobs[job].url,
+                            workerSecret: process.env.WORKER_SECRET,
+                        })];
+                case 4:
+                    result = _d.sent();
+                    return [3 /*break*/, 6];
+                case 5:
+                    error_1 = _d.sent();
+                    console.log(error_1.response.data.error);
+                    return [3 /*break*/, 6];
+                case 6:
+                    _i++;
+                    return [3 /*break*/, 2];
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    error_2 = _d.sent();
+                    console.error("Error processing message", error_2);
+                    return [3 /*break*/, 9];
+                case 9:
                     // keep polling
-                    setTimeout(startWorker, 30000);
+                    setTimeout(verifyImage, 30000);
                     return [2 /*return*/];
             }
         });
     });
 }
-startWorker();
+function resizeThumbnail() {
+    return __awaiter(this, void 0, void 0, function () {
+        var jobs, _a, _b, _c, _i, job, result, error_3, error_4;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    _d.trys.push([0, 8, , 9]);
+                    return [4 /*yield*/, db_1.db.job.findMany({
+                            where: {
+                                thumbnail: { equals: "" },
+                                image: { not: { equals: "" } },
+                            },
+                            take: 50,
+                        })];
+                case 1:
+                    jobs = _d.sent();
+                    _a = jobs;
+                    _b = [];
+                    for (_c in _a)
+                        _b.push(_c);
+                    _i = 0;
+                    _d.label = 2;
+                case 2:
+                    if (!(_i < _b.length)) return [3 /*break*/, 7];
+                    _c = _b[_i];
+                    if (!(_c in _a)) return [3 /*break*/, 6];
+                    job = _c;
+                    _d.label = 3;
+                case 3:
+                    _d.trys.push([3, 5, , 6]);
+                    return [4 /*yield*/, axios_1.default.post("".concat(process.env.NEXT_PUBLIC_APP_URL, "/api/images/resize"), {
+                            jobId: jobs[job].id,
+                            url: jobs[job].image,
+                            workerSecret: process.env.WORKER_SECRET,
+                        })];
+                case 4:
+                    result = _d.sent();
+                    return [3 /*break*/, 6];
+                case 5:
+                    error_3 = _d.sent();
+                    console.log(error_3.response.data.error);
+                    return [3 /*break*/, 6];
+                case 6:
+                    _i++;
+                    return [3 /*break*/, 2];
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    error_4 = _d.sent();
+                    console.error("Error processing message", error_4);
+                    return [3 /*break*/, 9];
+                case 9:
+                    // keep polling
+                    setTimeout(resizeThumbnail, 30000);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+resizeThumbnail();
+verifyImage();

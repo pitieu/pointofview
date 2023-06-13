@@ -12,10 +12,14 @@ const __dirname = path.resolve()
 
 const imageFolder = "public/images/uploads/"
 
+interface IMAGE_RESPONSE {
+  image: string
+}
+
 export const screenshotLocalUrl = async (url: string): Promise<string> => {
   try {
     const validUrl = new URL(url)
-    const response = await axios.get(
+    const response: { data: IMAGE_RESPONSE } = await axios.get(
       `http://localhost:4000/screenshot?url=${validUrl.href}`
     )
     let imageBase64: string
@@ -30,6 +34,7 @@ export const screenshotLocalUrl = async (url: string): Promise<string> => {
   }
 }
 export const screenshotOneUrl = async (url: string): Promise<string> => {
+  console.log("screenshotOneUrl")
   const client = new screenshotone.Client(
     env.SCREENSHOT_API,
     env.SCREENSHOT_SECRET
@@ -135,11 +140,15 @@ export const resizeImageFromUrl = async (
   resizeWidth: number = 200,
   resizeHeight: number = resizeWidth
 ) => {
+  console.log("imageUrl", imageURL)
+
   const response = await axios({
     url: imageURL,
     method: "GET",
     responseType: "arraybuffer",
   })
+  console.log("image response", response.headers["content-type"])
+
   if (!response.headers["content-type"].startsWith("image")) {
     throw new Error("URL does not point to an image")
   }
@@ -151,7 +160,7 @@ export const resizeImageFromUrl = async (
       position: "top",
     })
     .toBuffer()
-  return outputBuffer.toString("base64")
+  return outputBuffer
 }
 
 export const resizeImage = async (

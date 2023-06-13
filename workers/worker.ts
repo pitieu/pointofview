@@ -14,13 +14,21 @@ async function verifyImage() {
       take: 50,
     })
 
-    jobs.forEach((job) => {
-      axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/api/images/url`, {
-        jobId: job.id,
-        url: job.url,
-        workerSecret: process.env.WORKER_SECRET,
-      })
-    })
+    console.log(jobs)
+    for (let job in jobs) {
+      try {
+        const result = await axios.post(
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/images/url`,
+          {
+            jobId: jobs[job].id,
+            url: jobs[job].url,
+            workerSecret: process.env.WORKER_SECRET,
+          }
+        )
+      } catch (error) {
+        console.log(error.response.data.error)
+      }
+    }
   } catch (error) {
     console.error("Error processing message", error)
   }
@@ -34,17 +42,25 @@ async function resizeThumbnail() {
     const jobs = await db.job.findMany({
       where: {
         thumbnail: { equals: "" },
+        image: { not: { equals: "" } },
       },
       take: 50,
     })
 
-    jobs.forEach((job) => {
-      axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/api/images/resize`, {
-        jobId: job.id,
-        url: job.url,
-        workerSecret: process.env.WORKER_SECRET,
-      })
-    })
+    for (let job in jobs) {
+      try {
+        const result = await axios.post(
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/images/resize`,
+          {
+            jobId: jobs[job].id,
+            url: jobs[job].image,
+            workerSecret: process.env.WORKER_SECRET,
+          }
+        )
+      } catch (error) {
+        console.log(error.response.data.error)
+      }
+    }
   } catch (error) {
     console.error("Error processing message", error)
   }

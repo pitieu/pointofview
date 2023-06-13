@@ -2,7 +2,6 @@ import { redirect } from "next/navigation"
 import { DollarSign, Users } from "lucide-react"
 
 import { authOptions } from "@/lib/auth"
-import { db } from "@/lib/db"
 import { getCurrentUser } from "@/lib/session"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DashboardShell } from "@/components/shell"
@@ -18,20 +17,6 @@ export default async function DashboardPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
 
-  const posts = await db.post.findMany({
-    where: {
-      authorId: user.id,
-    },
-    select: {
-      id: true,
-      title: true,
-      published: true,
-      createdAt: true,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  })
   return (
     <DashboardShell>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
