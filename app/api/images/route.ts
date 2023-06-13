@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { env } from "@/env.mjs"
 import { createClient } from "@supabase/supabase-js"
+
+import { env } from "@/env.mjs"
 
 const supabaseUrl = "https://wponzzunhfwetffursiz.supabase.co"
 const supabaseKey = env.SUPABASE_API_KEY || ""
@@ -22,6 +23,7 @@ export async function POST(req: NextRequest) {
   const { data } = supabase.storage
     .from("images")
     .getPublicUrl(`${fileToStorage.name}`)
+
   console.log("public url image", data.publicUrl)
   return new Response(
     JSON.stringify({

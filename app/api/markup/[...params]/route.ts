@@ -3,8 +3,11 @@ import path from "path"
 import { headers } from "next/headers"
 import { NextRequest } from "next/server"
 import { decodeFromBase36 } from "@/utils/string"
+import { kv } from "@vercel/kv"
 import * as cheerio from "cheerio"
 import * as mime from "mime-types"
+
+import { db } from "@/lib/db.js"
 
 import jsFile from "./jsFile.js"
 
@@ -48,9 +51,23 @@ export async function GET(request: NextRequest) {
 
     if (!subdomain) throw new Error("No subdomain given")
     const URL_REPLACE = `http://${myHost}/api/markup/`
-    console.log(decodeFromBase36(subdomain), request.nextUrl.href)
+    // console.log(decodeFromBase36(subdomain), request.nextUrl.href)
 
     const nextUrl = new URL(request.nextUrl.href)
+    const cachedUrl = await kv.get("key")
+
+    if (!cachedUrl) {
+      const result = await db.job.findUnique({
+        where: {
+          id: subdomain,
+        },
+      })
+      if (result) {
+        await kv.set(subdomain, result)
+      } else {
+        throw new Error(`Could not find id:${subdomain}`)
+      }
+    }
 
     const originalUrl = new URL(
       decodeFromBase36(

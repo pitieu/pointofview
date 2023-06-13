@@ -1,13 +1,9 @@
 import React from "react"
-import Link from "next/link"
 
 import { marketingConfig } from "@/config/marketing"
 import { getCurrentUser } from "@/lib/session"
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
 import LoginOrUserAccount from "@/components/loginOrUserAccount"
 import { MainNav } from "@/components/navigation/main-nav"
-import { UserAccountNav } from "@/components/navigation/user-account-nav"
 import { SiteFooter } from "@/components/site-footer"
 
 interface MarketingLayoutProps {
